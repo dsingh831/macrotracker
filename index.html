@@ -385,6 +385,15 @@
         .meal-name-input:focus { border-color: var(--protein); }
         .meal-name-input::placeholder { color: var(--text-muted); }
 
+        /* iOS STANDALONE INPUT FIX — force GPU compositing on all inputs/selects.
+           In standalone PWA mode, position:fixed ancestors can prevent inputs from
+           receiving focus. translateZ(0) creates a separate compositing layer which
+           allows iOS to correctly handle focus and keyboard for these elements. */
+        input, textarea, select {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+
         /* FOOD PICKER */
         .food-picker-list { max-height: 42vh; overflow-y: auto; margin-bottom: 10px; }
         .fav-pick-card {
@@ -587,7 +596,8 @@
 </div>
 
 <!-- MEAL BUILDER OVERLAY -->
-<div class="overlay" id="buildMealOverlay" style="align-items:flex-start; padding-top:32px;">
+<div class="overlay" id="buildMealOverlay" style="padding:0; overflow:hidden;">
+    <div style="position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:32px 24px 24px; box-sizing:border-box; display:flex; align-items:flex-start;">
     <div class="build-overlay-inner">
         <div class="build-header">
             <div class="overlay-title" id="buildOverlayTitle" style="margin-bottom:4px; text-align:left;">Build a Meal</div>
@@ -617,6 +627,7 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
 
 <!-- FOOD PICKER OVERLAY -->
@@ -637,8 +648,8 @@
 </div>
 
 <!-- FOOD DETAIL OVERLAY -->
-<div class="overlay" id="foodDetailOverlay" style="align-items:flex-start; justify-content:flex-start; padding-top:28px; overflow-y:auto; -webkit-overflow-scrolling:touch;">
-    <div style="width:100%; padding:0 24px 48px;" id="foodDetailScrollInner">
+<div class="overlay" id="foodDetailOverlay" style="padding:0; overflow:hidden;">
+    <div id="foodDetailScrollInner" style="position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:28px 24px 48px; box-sizing:border-box;">
         <div class="overlay-title" style="margin-bottom:4px;">Add Food</div>
         <div class="overlay-sub">Name the food, enter numbers, and let AI fill the rest</div>
 
@@ -813,8 +824,8 @@
 </div>
 
 <!-- EDIT MEAL OVERLAY -->
-<div class="overlay" id="editMealOverlay">
-    <div style="width:100%;">
+<div class="overlay" id="editMealOverlay" style="padding:0; overflow:hidden;">
+    <div style="position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:28px 24px 48px; box-sizing:border-box;">
         <div class="overlay-title" style="margin-bottom:4px;">Edit Meal</div>
         <div class="overlay-sub">Update the name or any macro values</div>
         <input class="edit-meal-name-input" id="editMealName" type="text" placeholder="Meal name">
@@ -1906,7 +1917,7 @@ function openFoodDetail(prefill = null, showSaveFav = true) {
     document.getElementById('saveFavRow').style.display = showSaveFav ? 'flex' : 'none';
     const overlay = document.getElementById('foodDetailOverlay');
     overlay.classList.add('active');
-    overlay.scrollTop = 0;
+    document.getElementById('foodDetailScrollInner').scrollTop = 0;
 
     // Precompute base nutrition so stepper can scale from the start
     // If prefill has both qty and at least one macro value, compute base; otherwise clear
