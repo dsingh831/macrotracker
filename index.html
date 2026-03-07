@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a110d">
@@ -32,7 +32,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding-bottom: var(--nav-height);
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         /* NAV */
@@ -348,7 +348,7 @@
         /* MEAL BUILDER */
         .build-overlay-inner {
             width: 100%; display: flex; flex-direction: column;
-            max-height: 90vh; overflow: hidden;
+            max-height: 90vh; overflow: clip;
         }
         .build-header { flex-shrink: 0; margin-bottom: 12px; }
         .build-food-list { flex: 1; overflow-y: auto; margin-bottom: 8px; }
@@ -2563,6 +2563,26 @@ async function init() {
 }
 
 init().catch(console.error);
+
+// ================================================================
+// iOS PWA STANDALONE KEYBOARD FIX
+// In home-screen (standalone) mode, tapping an input inside a
+// position:fixed overlay does not trigger the keyboard automatically.
+// Explicitly calling .focus() on touchend resolves this.
+// The check for navigator.standalone limits this to PWA mode only.
+// ================================================================
+(function() {
+    function iosFocusFix(e) {
+        const el = e.target;
+        const tag = el.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+            // Small delay lets the touch event fully resolve before focusing
+            setTimeout(function() { el.focus(); }, 50);
+        }
+    }
+    // Run in both standalone and browser — harmless in browser, essential in PWA
+    document.addEventListener('touchend', iosFocusFix, true);
+})();
 </script>
 </body>
 </html>
