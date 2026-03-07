@@ -2420,22 +2420,6 @@ async function init() {
 
 init().catch(console.error);
 
-// ================================================================
-// iOS PWA STANDALONE KEYBOARD FIX
-// In home-screen (standalone) mode, inputs inside position:fixed
-// overlays do not trigger the keyboard on tap. We intercept
-// touchstart at the capture phase (before anything else) and
-// explicitly call .focus() — this reliably triggers the keyboard.
-// ================================================================
-(function() {
-    document.addEventListener('touchstart', function(e) {
-        const el = e.target;
-        const tag = el.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
-            el.focus();
-        }
-    }, { capture: true, passive: true });
-})();
 </script>
 </body>
 </html>
