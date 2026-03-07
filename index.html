@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a110d">
@@ -25,42 +25,16 @@
             --nav-height: 70px;
         }
 
-        html, body {
-            width: 100%;
-            min-height: 100%;
-            background: var(--bg);
-        }
-
         body {
+            background: var(--bg);
             color: var(--text);
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding-bottom: var(--nav-height);
             overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
         }
 
-        body.modal-open {
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-        }
-
-        input, textarea, select, button {
-            font: inherit;
-        }
-
-        input, textarea, select {
-            -webkit-appearance: none;
-            appearance: none;
-            border-radius: 0;
-            touch-action: manipulation;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            caret-color: var(--protein);
-        }
-
+        /* NAV */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -81,29 +55,33 @@
             color: var(--text-muted);
             padding: 8px 0;
             transition: color 0.2s;
-            touch-action: manipulation;
         }
         .nav-item.active { color: var(--protein); }
         .nav-item svg { width: 22px; height: 22px; }
         .nav-item span { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
 
+        /* PAGES */
         .page { display: none; padding: 20px 16px; min-height: calc(100vh - var(--nav-height)); animation: fadeIn 0.2s ease; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* HEADER */
         .page-header { margin-bottom: 24px; }
         .page-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
         .page-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
 
+        /* CARDS */
         .card { background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--border); }
         .card-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
 
+        /* PROTEIN RING */
         .protein-ring-container { display: flex; flex-direction: column; align-items: center; }
         .protein-ring-wrap { position: relative; width: 180px; height: 180px; }
         .ring-label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
         .ring-label .ring-value { font-size: 36px; font-weight: 800; color: var(--protein); line-height: 1; }
         .ring-label .ring-unit { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
+        /* MINI RINGS */
         .mini-rings { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
         .mini-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
         .mini-ring-label { text-align: center; }
@@ -111,6 +89,7 @@
         .mini-ring-label .sub { font-size: 10px; color: var(--text-muted); }
         .mini-ring-label .name { font-size: 10px; color: var(--text-muted); }
 
+        /* FAB */
         .fab {
             position: fixed;
             bottom: calc(var(--nav-height) + 16px);
@@ -127,47 +106,31 @@
             z-index: 50;
             font-size: 15px; font-weight: 700; color: #0a110d;
             white-space: nowrap;
-            touch-action: manipulation;
         }
         .fab:active { transform: scale(0.95); }
         .fab.recording { background: #ef4444; box-shadow: 0 4px 24px rgba(239,68,68,0.45); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
         .fab svg { width: 20px; height: 20px; flex-shrink: 0; }
 
-        .method-picker-overlay,
-        .overlay {
-            position: fixed;
-            inset: 0;
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-
-        .method-picker-overlay.active,
-        .overlay.active {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-        }
-
+        /* METHOD PICKER */
         .method-picker-overlay {
+            position: fixed; inset: 0;
             background: rgba(0,0,0,0.82);
             z-index: 200;
-            display: flex;
+            display: none;
             align-items: flex-end;
             padding: 0;
         }
+        .method-picker-overlay.active { display: flex; }
         .method-sheet {
             width: 100%;
             background: var(--surface);
             border-radius: 24px 24px 0 0;
             padding: 12px 16px 32px;
             border-top: 1px solid var(--border);
-            transform: translateY(100%);
-            transition: transform 0.25s cubic-bezier(0.34,1.2,0.64,1);
+            animation: slideUp 0.25s cubic-bezier(0.34,1.2,0.64,1);
         }
-        .method-picker-overlay.active .method-sheet { transform: translateY(0); }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .method-sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 100px; margin: 0 auto 20px; }
         .method-sheet-title { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; text-align: center; }
         .method-card {
@@ -176,7 +139,6 @@
             border-radius: 14px; padding: 16px;
             margin-bottom: 10px; cursor: pointer;
             transition: all 0.15s;
-            touch-action: manipulation;
         }
         .method-card:active { background: #1e3028; border-color: var(--protein); }
         .method-icon {
@@ -191,22 +153,26 @@
         .method-label { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
         .method-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
         .method-arrow { color: var(--text-muted); }
-        .method-cancel { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; touch-action: manipulation; }
+        .method-cancel { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--surface2); color: var(--text-muted); font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; }
 
+        /* OVERLAY */
         .overlay {
+            position: fixed; inset: 0;
             background: rgba(10,17,13,0.97);
             z-index: 200;
-            display: flex;
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 24px;
-            overflow-y: auto;
+            /* No backdrop-filter — causes iOS Safari input focus bug on position:fixed overlays */
             -webkit-overflow-scrolling: touch;
         }
+        .overlay.active { display: flex; }
         .overlay-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; text-align: center; }
         .overlay-sub { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 24px; line-height: 1.5; }
 
+        /* TRANSCRIPT */
         .transcript-box {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -221,6 +187,7 @@
             word-break: break-word;
         }
 
+        /* MIC ANIM */
         .mic-anim {
             width: 110px; height: 110px;
             border-radius: 50%;
@@ -239,28 +206,31 @@
         .mic-anim::after { width: 145%; height: 145%; animation-delay: 0.6s; }
         @keyframes sonar { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.4); opacity: 0; } }
 
+        /* BUTTONS */
         .btn-row { display: flex; gap: 10px; width: 100%; }
         .btn {
             flex: 1; padding: 14px; border-radius: 12px; border: none;
             font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s;
-            touch-action: manipulation;
         }
         .btn-primary { background: var(--protein); color: #0a110d; }
         .btn-secondary { background: var(--surface2); color: var(--text); }
         .btn:active { transform: scale(0.96); }
-        .btn-full { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--protein); color: #0a110d; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s; touch-action: manipulation; }
+        .btn-full { width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--protein); color: #0a110d; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
         .btn-full:active { transform: scale(0.98); }
 
+        /* MACRO EDIT GRID */
         .macro-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; width: 100%; }
         .macro-input-wrap { background: var(--surface2); border-radius: 12px; padding: 12px; }
         .macro-input-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
         .macro-input { background: none; border: none; color: var(--text); font-size: 22px; font-weight: 800; width: 100%; outline: none; }
         .macro-input-unit { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
+        /* SPINNER */
         .loading-state { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 32px; }
         .spinner { width: 38px; height: 38px; border: 3px solid var(--border); border-top-color: var(--protein); border-radius: 50%; animation: spin 0.7s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* MEAL LIST */
         .meal-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; }
         .meal-item:last-child { border-bottom: none; }
         .meal-info { flex: 1; }
@@ -269,9 +239,10 @@
         .meal-protein-col { text-align: right; }
         .meal-protein-val { font-size: 16px; font-weight: 800; color: var(--protein); }
         .meal-protein-lbl { font-size: 10px; color: var(--text-muted); }
-        .meal-del { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.2s; touch-action: manipulation; }
+        .meal-del { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.2s; }
         .meal-del:hover { color: #ef4444; }
 
+        /* BODY LOG */
         .body-log-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
         .input-wrap { background: var(--surface2); border-radius: 12px; padding: 14px; }
         .input-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
@@ -287,17 +258,21 @@
         .body-log-val .lbl { font-size: 10px; color: var(--text-muted); text-align: right; }
         .body-log-list { max-height: 280px; overflow-y: auto; }
 
+        /* HIT RATE */
         .hit-rate-card { text-align: center; padding: 28px 20px; }
         .hit-rate-number { font-size: 72px; font-weight: 900; color: var(--protein); line-height: 1; letter-spacing: -2px; }
         .hit-rate-label { font-size: 15px; font-weight: 600; margin-top: 8px; }
         .hit-rate-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
 
+        /* PERIOD TOGGLE */
         .period-toggle { display: flex; background: var(--surface); border-radius: 10px; padding: 3px; margin-bottom: 14px; border: 1px solid var(--border); }
-        .period-btn { flex: 1; padding: 9px; border: none; border-radius: 8px; background: none; color: var(--text-muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
+        .period-btn { flex: 1; padding: 9px; border: none; border-radius: 8px; background: none; color: var(--text-muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .period-btn.active { background: var(--protein); color: #0a110d; }
 
+        /* CHART */
         .chart-wrap { position: relative; height: 200px; }
 
+        /* SETTINGS */
         .settings-section { margin-bottom: 24px; }
         .settings-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
         .setting-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; }
@@ -306,11 +281,13 @@
         .setting-input::placeholder { color: var(--border); }
         .setting-note { font-size: 11px; color: var(--text-muted); padding: 0 4px 12px; line-height: 1.5; }
 
+        /* EMPTY STATE */
         .empty-state { text-align: center; padding: 32px 20px; color: var(--text-muted); }
         .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
         .empty-state h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
         .empty-state p { font-size: 13px; line-height: 1.5; }
 
+        /* TOAST */
         .toast {
             position: fixed; top: 20px; left: 50%;
             transform: translateX(-50%) translateY(-100px);
@@ -327,11 +304,13 @@
         .toast.success { border-color: var(--protein); color: var(--protein); }
         .toast.error { border-color: #ef4444; color: #ef4444; }
 
+        /* COLOR HELPERS */
         .text-protein { color: var(--protein); }
         .text-carbs { color: var(--carbs); }
         .text-fat { color: var(--fat); }
         .text-calories { color: var(--calories); }
 
+        /* INSTALL BANNER */
         .install-banner {
             background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
             padding: 14px 16px; margin-bottom: 16px;
@@ -339,8 +318,9 @@
         }
         .install-banner.visible { display: flex; }
         .install-banner p { flex: 1; font-size: 13px; color: var(--text-muted); line-height: 1.4; }
-        .install-btn { background: var(--protein); color: #0a110d; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; touch-action: manipulation; }
+        .install-btn { background: var(--protein); color: #0a110d; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 
+        /* CALORIE BAR */
         .calorie-counter-card { padding: 18px 20px; }
         .calorie-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
         .calorie-current-val { font-size: 36px; font-weight: 900; color: var(--calories); line-height: 1; letter-spacing: -1px; }
@@ -352,9 +332,11 @@
         .calorie-remaining { font-size: 12px; color: var(--text-muted); font-weight: 600; }
         .calorie-pct { font-size: 12px; color: var(--calories); font-weight: 700; }
 
+        /* CLICKABLE MEAL ITEMS */
         .meal-item-body { flex: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px 0; border-radius: 8px; transition: background 0.15s; }
         .meal-item-body:active { background: var(--surface2); }
 
+        /* EDIT MEAL OVERLAY */
         .edit-meal-name-input {
             background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
             padding: 10px 14px; color: var(--text); font-size: 15px; font-weight: 600;
@@ -362,6 +344,7 @@
         }
         .edit-meal-name-input:focus { border-color: var(--protein); }
 
+        /* MEAL BUILDER */
         .build-overlay-inner {
             width: 100%; display: flex; flex-direction: column;
             max-height: 90vh; overflow: hidden;
@@ -377,7 +360,7 @@
         .food-item-info { flex: 1; min-width: 0; }
         .food-item-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .food-item-macros { font-size: 11px; color: var(--text-muted); }
-        .food-item-remove { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; flex-shrink: 0; transition: color 0.2s; touch-action: manipulation; }
+        .food-item-remove { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; flex-shrink: 0; transition: color 0.2s; }
         .food-item-remove:hover { color: #ef4444; }
         .add-food-btn {
             width: 100%; padding: 13px; border: 2px dashed var(--border);
@@ -385,7 +368,6 @@
             font-size: 14px; font-weight: 700; cursor: pointer;
             transition: all 0.2s; margin-bottom: 12px; display: flex;
             align-items: center; justify-content: center; gap: 8px;
-            touch-action: manipulation;
         }
         .add-food-btn:active { border-color: var(--protein); color: var(--protein); }
         .meal-totals-row {
@@ -403,13 +385,13 @@
         .meal-name-input:focus { border-color: var(--protein); }
         .meal-name-input::placeholder { color: var(--text-muted); }
 
+        /* FOOD PICKER */
         .food-picker-list { max-height: 42vh; overflow-y: auto; margin-bottom: 10px; }
         .fav-pick-card {
             display: flex; align-items: center; gap: 12px;
             background: var(--surface2); border: 1px solid var(--border);
             border-radius: 12px; padding: 13px 14px; margin-bottom: 8px;
             cursor: pointer; transition: border-color 0.15s;
-            touch-action: manipulation;
         }
         .fav-pick-card:active { border-color: var(--protein); }
         .fav-pick-star { font-size: 18px; flex-shrink: 0; }
@@ -422,16 +404,15 @@
             font-size: 15px; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             margin-bottom: 10px;
-            touch-action: manipulation;
         }
         .new-food-card:active { border-color: var(--protein); }
         .picker-section-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
 
+        /* SAVE AS FAVORITE TOGGLE */
         .save-fav-row {
             display: flex; align-items: center; gap: 12px;
             background: var(--surface2); border-radius: 12px;
             padding: 12px 14px; margin-bottom: 16px; cursor: pointer;
-            touch-action: manipulation;
         }
         .save-fav-text { flex: 1; }
         .save-fav-label { font-size: 14px; font-weight: 600; }
@@ -448,6 +429,7 @@
         }
         .toggle-pill.on::after { left: 23px; }
 
+        /* FAVORITES IN SETTINGS */
         .fav-list-item {
             display: flex; align-items: center; gap: 10px;
             background: var(--surface); border: 1px solid var(--border);
@@ -456,9 +438,10 @@
         .fav-list-info { flex: 1; }
         .fav-list-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
         .fav-list-macros { font-size: 11px; color: var(--text-muted); }
-        .fav-list-del { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.15s; touch-action: manipulation; }
+        .fav-list-del { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.15s; }
         .fav-list-del:hover { color: #ef4444; }
 
+        /* MANUAL TEXTAREA */
         .manual-textarea {
             width: 100%; background: var(--surface); border: 1px solid var(--border);
             border-radius: 14px; padding: 16px; color: var(--text); font-size: 16px;
@@ -468,6 +451,7 @@
         .manual-textarea:focus { border-color: var(--protein); }
         .manual-textarea::placeholder { color: var(--border); }
 
+        /* MICRONUTRIENT GAUGE CARD */
         .micro-group-title {
             font-size: 10px; font-weight: 700; color: var(--text-muted);
             text-transform: uppercase; letter-spacing: 1px;
@@ -498,13 +482,13 @@
         .micro-pct { font-size: 11px; font-weight: 700; color: var(--text-muted); }
         .micro-empty { text-align: center; color: var(--text-muted); font-size: 13px; padding: 12px 0; }
 
+        /* MICRO FIELDS IN FOOD DETAIL */
         .micro-toggle-btn {
             width: 100%; background: none; border: 1px solid var(--border);
             color: var(--text-muted); border-radius: 10px; padding: 10px 14px;
             font-size: 13px; font-weight: 600; cursor: pointer; text-align: left;
             margin-bottom: 10px; font-family: inherit;
             display: flex; align-items: center; justify-content: space-between;
-            touch-action: manipulation;
         }
         .micro-fields-grid {
             display: grid; grid-template-columns: 1fr 1fr;
@@ -523,14 +507,657 @@
     </style>
 </head>
 <body>
-    <!-- Paste your existing BODY markup here exactly as-is. -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+    <div class="nav-item active" data-tab="today">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Today</span>
+    </div>
+    <div class="nav-item" data-tab="trends">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>Trends</span>
+    </div>
+    <div class="nav-item" data-tab="body">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <span>Body</span>
+    </div>
+    <div class="nav-item" data-tab="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>Settings</span>
+    </div>
+</nav>
+
+<!-- FAB -->
+<button class="fab" id="fabMic" title="Log a meal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#0a110d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    New Meal
+</button>
+
+<!-- METHOD PICKER -->
+<div class="method-picker-overlay" id="methodPicker">
+    <div class="method-sheet">
+        <div class="method-sheet-handle"></div>
+        <div class="method-sheet-title">How do you want to log?</div>
+
+        <div class="method-card" id="methodManual">
+            <div class="method-icon manual">📊</div>
+            <div class="method-text">
+                <div class="method-label">Enter Manually</div>
+                <div class="method-desc">Type in food name and macro numbers directly</div>
+            </div>
+            <svg class="method-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="method-card" id="methodFavorites">
+            <div class="method-icon" style="background:rgba(250,204,21,0.12);">⭐</div>
+            <div class="method-text">
+                <div class="method-label">Favorite Foods</div>
+                <div class="method-desc">Instantly log a saved food — one tap, done</div>
+            </div>
+            <svg class="method-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <div class="method-card" id="methodVoice">
+            <div class="method-icon voice">🎤</div>
+            <div class="method-text">
+                <div class="method-label">Voice Log</div>
+                <div class="method-desc">Speak your meal name — enter macros manually after</div>
+            </div>
+            <svg class="method-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
+        <button class="method-cancel" id="methodCancel">Cancel</button>
+    </div>
+</div>
+
+<!-- MEAL BUILDER OVERLAY -->
+<div class="overlay" id="buildMealOverlay" style="align-items:flex-start; padding-top:32px;">
+    <div class="build-overlay-inner">
+        <div class="build-header">
+            <div class="overlay-title" id="buildOverlayTitle" style="margin-bottom:4px; text-align:left;">Build a Meal</div>
+            <div class="overlay-sub" id="buildOverlaySub" style="text-align:left; margin-bottom:14px;">Add each food item separately</div>
+            <input class="meal-name-input" id="buildMealName" type="text" placeholder="Meal name (e.g. Lunch, Post-workout)">
+        </div>
+        <div class="build-food-list" id="buildFoodList">
+            <div class="empty-state" style="padding:20px 0;" id="buildEmptyState">
+                <div style="font-size:28px; margin-bottom:8px;">🥗</div>
+                <div style="font-size:13px; color:var(--text-muted);">No foods added yet.<br>Tap "+ Add Food" to start.</div>
+            </div>
+        </div>
+        <div class="build-footer">
+            <button class="add-food-btn" id="buildAddFoodBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Food
+            </button>
+            <div class="meal-totals-row" id="buildTotalsRow" style="display:none;">
+                <div class="meal-total-col"><div class="t-val text-protein" id="buildTotalProtein">0g</div><div class="t-lbl">Protein</div></div>
+                <div class="meal-total-col"><div class="t-val text-carbs" id="buildTotalCarbs">0g</div><div class="t-lbl">Carbs</div></div>
+                <div class="meal-total-col"><div class="t-val text-fat" id="buildTotalFat">0g</div><div class="t-lbl">Fat</div></div>
+                <div class="meal-total-col"><div class="t-val text-calories" id="buildTotalCals">0</div><div class="t-lbl">kcal</div></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-secondary" id="cancelBuildMeal">Cancel</button>
+                <button class="btn btn-primary" id="saveBuildMeal">Save Meal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOD PICKER OVERLAY -->
+<div class="overlay" id="foodPickerOverlay">
+    <div style="width:100%;">
+        <div class="overlay-title" id="foodPickerTitle" style="margin-bottom:4px;">Add Food</div>
+        <div class="overlay-sub" id="foodPickerSub">Pick a favorite or enter a new food</div>
+        <div id="favPickerSection" style="display:none;">
+            <div class="picker-section-label">⭐ Favorites</div>
+            <div class="food-picker-list" id="favPickerList"></div>
+        </div>
+        <button class="new-food-card" id="pickNewFoodBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Enter a New Food
+        </button>
+        <button class="btn btn-secondary" style="width:100%; padding:14px;" id="cancelFoodPicker">Cancel</button>
+    </div>
+</div>
+
+<!-- FOOD DETAIL OVERLAY -->
+<div class="overlay" id="foodDetailOverlay" style="align-items:flex-start; justify-content:flex-start; padding-top:28px; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+    <div style="width:100%; padding:0 24px 48px;" id="foodDetailScrollInner">
+        <div class="overlay-title" style="margin-bottom:4px;">Add Food</div>
+        <div class="overlay-sub">Name the food, enter numbers, and let AI fill the rest</div>
+
+        <div style="font-size:10px; font-weight:700; color:var(--protein); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Food or Ingredient Name *</div>
+        <input class="meal-name-input" id="foodDetailName" type="text" placeholder="e.g. Chicken breast, oats, Greek yogurt…" style="border-color:var(--protein); margin-bottom:10px;">
+
+        <div style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Quantity <span style="font-weight:400; text-transform:none; letter-spacing:0;">(helps AI calculate accurately)</span></div>
+        <div style="display:flex; gap:8px; margin-bottom:16px; align-items:center;">
+            <!-- stepper minus -->
+            <button onclick="stepQty(-1)" type="button"
+                style="width:44px; height:44px; flex-shrink:0; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:22px; font-weight:300; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; user-select:none;">−</button>
+            <input id="foodDetailQty" type="number" min="0" step="any" placeholder="1"
+                style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:11px 8px; color:var(--text); font-size:17px; font-weight:700; outline:none; font-family:inherit; text-align:center;">
+            <!-- stepper plus -->
+            <button onclick="stepQty(1)" type="button"
+                style="width:44px; height:44px; flex-shrink:0; background:var(--protein); border:none; border-radius:10px; color:#fff; font-size:22px; font-weight:300; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation; user-select:none;">+</button>
+            <select id="foodDetailUnit"
+                style="width:105px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:11px 8px; color:var(--text); font-size:14px; font-weight:600; outline:none; font-family:inherit; appearance:none; text-align:center; cursor:pointer; flex-shrink:0;">
+                <option value="servings">servings</option>
+                <option value="pieces">pieces</option>
+                <option value="g">g</option>
+                <option value="oz">oz</option>
+                <option value="lbs">lbs</option>
+                <option value="ml">ml</option>
+                <option value="cups">cups</option>
+                <option value="tbsp">tbsp</option>
+                <option value="tsp">tsp</option>
+            </select>
+        </div>
+
+        <!-- MACROS -->
+        <div style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Macros</div>
+        <div class="macro-edit-grid">
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-protein">Protein</div>
+                <input class="macro-input" id="foodDetailProtein" type="number" min="0" step="1" placeholder="0">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-carbs">Carbs</div>
+                <input class="macro-input" id="foodDetailCarbs" type="number" min="0" step="1" placeholder="0">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-fat">Fat</div>
+                <input class="macro-input" id="foodDetailFat" type="number" min="0" step="1" placeholder="0">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-calories">Calories</div>
+                <input class="macro-input" id="foodDetailCalories" type="number" min="0" step="1" placeholder="0">
+                <div class="macro-input-unit">kcal</div>
+            </div>
+        </div>
+
+        <!-- VITAMINS & MINERALS DIVIDER -->
+        <div style="display:flex; align-items:center; gap:10px; margin:18px 0 12px;">
+            <div style="flex:1; height:1px; background:var(--border);"></div>
+            <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:1px; white-space:nowrap;">Vitamins &amp; Minerals</div>
+            <div style="flex:1; height:1px; background:var(--border);"></div>
+        </div>
+
+        <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:14px;">Enter values manually below, or leave blank if unknown.</div>
+
+        <!-- MICRO FIELDS — always visible -->
+        <div id="microFieldsSection">
+            <div class="micro-fields-grid">
+                <div class="micro-field-wrap"><div class="micro-field-label">Fiber</div><div class="micro-field-row"><input class="micro-field-input" id="mf_fiber" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">g</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Sat. Fat</div><div class="micro-field-row"><input class="micro-field-input" id="mf_satFat" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">g</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Sugar</div><div class="micro-field-row"><input class="micro-field-input" id="mf_sugar" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">g</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Sodium</div><div class="micro-field-row"><input class="micro-field-input" id="mf_sodium" type="number" min="0" step="1" placeholder="0"><span class="micro-field-unit">mg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Vitamin A</div><div class="micro-field-row"><input class="micro-field-input" id="mf_vitA" type="number" min="0" step="1" placeholder="0"><span class="micro-field-unit">mcg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Vitamin C</div><div class="micro-field-row"><input class="micro-field-input" id="mf_vitC" type="number" min="0" step="1" placeholder="0"><span class="micro-field-unit">mg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Vitamin D</div><div class="micro-field-row"><input class="micro-field-input" id="mf_vitD" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">mcg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Vitamin B12</div><div class="micro-field-row"><input class="micro-field-input" id="mf_vitB12" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">mcg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Calcium</div><div class="micro-field-row"><input class="micro-field-input" id="mf_calcium" type="number" min="0" step="1" placeholder="0"><span class="micro-field-unit">mg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Iron</div><div class="micro-field-row"><input class="micro-field-input" id="mf_iron" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">mg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Potassium</div><div class="micro-field-row"><input class="micro-field-input" id="mf_potassium" type="number" min="0" step="1" placeholder="0"><span class="micro-field-unit">mg</span></div></div>
+                <div class="micro-field-wrap"><div class="micro-field-label">Zinc</div><div class="micro-field-row"><input class="micro-field-input" id="mf_zinc" type="number" min="0" step="0.1" placeholder="0"><span class="micro-field-unit">mg</span></div></div>
+            </div>
+        </div>
+
+        <div class="save-fav-row" id="saveFavRow" onclick="toggleSaveFav()" style="margin-top:14px;">
+            <div class="save-fav-text">
+                <div class="save-fav-label">⭐ Save as Favorite</div>
+                <div class="save-fav-sub">Add to your favorites for quick reuse</div>
+            </div>
+            <div class="toggle-pill" id="saveFavToggle"></div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="cancelFoodDetail">Back</button>
+            <button class="btn btn-primary" id="confirmFoodDetail">Add to Meal</button>
+        </div>
+    </div>
+</div>
+
+<!-- VOICE OVERLAY -->
+<div class="overlay" id="voiceOverlay">
+    <!-- Step 1: Listening -->
+    <div id="listeningState">
+        <div class="mic-anim">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="44" height="44">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+        </div>
+        <div class="overlay-title">Listening...</div>
+        <div class="overlay-sub">Describe what you ate naturally.<br>"Two eggs, Greek yogurt, a banana and some almonds"</div>
+        <div class="transcript-box" id="liveTranscript" style="color:var(--text-muted); font-style:italic;">Speak now...</div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="cancelVoice">Cancel</button>
+            <button class="btn btn-primary" id="stopListening">Done</button>
+        </div>
+    </div>
+
+    <!-- Step 2: Processing -->
+    <div id="processingState" style="display:none;">
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <div style="font-size:17px; font-weight:700;">Analyzing meal...</div>
+            <div style="font-size:13px; color:var(--text-muted);">Claude is calculating your macros</div>
+        </div>
+    </div>
+
+    <!-- Step 3: Result -->
+    <div id="resultState" style="display:none; width:100%;">
+        <div class="overlay-title" style="margin-bottom:4px;">Looks right?</div>
+        <div class="overlay-sub">Tap any number to adjust before saving</div>
+        <div id="mealNameDisplay" style="font-size:16px; font-weight:700; margin-bottom:14px; color:var(--text-muted);"></div>
+        <div class="macro-edit-grid">
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-protein">Protein</div>
+                <input class="macro-input" id="editProtein" type="number" min="0" step="1">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-carbs">Carbs</div>
+                <input class="macro-input" id="editCarbs" type="number" min="0" step="1">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-fat">Fat</div>
+                <input class="macro-input" id="editFat" type="number" min="0" step="1">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-calories">Calories</div>
+                <input class="macro-input" id="editCalories" type="number" min="0" step="1">
+                <div class="macro-input-unit">kcal</div>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="redoVoice">Redo</button>
+            <button class="btn btn-primary" id="saveMealBtn">Save Meal</button>
+        </div>
+    </div>
+</div>
+
+<!-- MANUAL TEXT OVERLAY -->
+<div class="overlay" id="manualOverlay">
+    <div style="width:100%;">
+        <div class="overlay-title">Log a Meal</div>
+        <div class="overlay-sub">Describe what you ate in detail</div>
+        <textarea class="manual-textarea" id="manualInput" placeholder="e.g. Two scrambled eggs with cheese, whole wheat toast with peanut butter, and a glass of oat milk"></textarea>
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="cancelManual">Cancel</button>
+            <button class="btn btn-primary" id="analyzeManual">Analyze</button>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT MEAL OVERLAY -->
+<div class="overlay" id="editMealOverlay">
+    <div style="width:100%;">
+        <div class="overlay-title" style="margin-bottom:4px;">Edit Meal</div>
+        <div class="overlay-sub">Update the name or any macro values</div>
+        <input class="edit-meal-name-input" id="editMealName" type="text" placeholder="Meal name">
+        <div class="macro-edit-grid">
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-protein">Protein</div>
+                <input class="macro-input" id="editMealProtein" type="number" min="0" step="1">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-carbs">Carbs</div>
+                <input class="macro-input" id="editMealCarbs" type="number" min="0" step="1">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-fat">Fat</div>
+                <input class="macro-input" id="editMealFat" type="number" min="0" step="1">
+                <div class="macro-input-unit">grams</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label text-calories">Calories</div>
+                <input class="macro-input" id="editMealCalories" type="number" min="0" step="1">
+                <div class="macro-input-unit">kcal</div>
+            </div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="cancelEditMeal">Cancel</button>
+            <button class="btn btn-primary" id="saveEditMeal">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EDIT BODY LOG OVERLAY -->
+<!-- ============================================================ -->
+<div class="overlay" id="editBodyOverlay">
+    <div style="width:100%;">
+        <div class="overlay-title" style="margin-bottom:4px;">Edit Log</div>
+        <div class="overlay-sub">Correct weight or waist entry</div>
+        <div class="macro-edit-grid">
+            <div class="macro-input-wrap">
+                <div class="macro-input-label" style="color:#10b981;">Weight</div>
+                <input class="macro-input" id="editBodyWeight" type="number" min="0" step="0.1" placeholder="—">
+                <div class="macro-input-unit" id="editBodyWeightUnit">lbs</div>
+            </div>
+            <div class="macro-input-wrap">
+                <div class="macro-input-label" style="color:#f87171;">Waist</div>
+                <input class="macro-input" id="editBodyWaist" type="number" min="0" step="0.1" placeholder="—">
+                <div class="macro-input-unit" id="editBodyWaistUnit">in</div>
+            </div>
+        </div>
+        <div class="btn-row" style="margin-top:8px;">
+            <button class="btn btn-secondary" id="cancelEditBody">Cancel</button>
+            <button class="btn btn-primary" id="saveEditBody">Save</button>
+        </div>
+        <button id="deleteBodyLogBtn" style="width:100%; margin-top:10px; background:none; border:1px solid #e74c3c; color:#e74c3c; padding:12px; border-radius:12px; font-size:14px; cursor:pointer;">Delete Entry</button>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- ============================================================ -->
+<!-- TODAY PAGE -->
+<!-- ============================================================ -->
+<div class="page active" id="page-today">
+    <div class="page-header">
+        <h1 id="todayGreetingLine">Today</h1>
+        <p id="todayDateLine">Track your nutrition</p>
+    </div>
+
+    <!-- Day Type Toggle -->
+    <div style="display:flex; justify-content:center; margin:0 0 16px 0;">
+        <div id="dayTypeToggle" style="display:flex; background:var(--surface); border:1px solid var(--border); border-radius:30px; padding:4px; gap:4px; width:100%; max-width:340px;">
+            <button id="dayTypeBtnRest" onclick="setDayType('rest')"
+                style="flex:1; padding:10px 0; border-radius:26px; border:none; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; touch-action:manipulation;">
+                🛌 Rest Day
+            </button>
+            <button id="dayTypeBtnExercise" onclick="setDayType('exercise')"
+                style="flex:1; padding:10px 0; border-radius:26px; border:none; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; touch-action:manipulation;">
+                💪 Exercise Day
+            </button>
+        </div>
+    </div>
+
+    <!-- Install banner -->
+    <div class="install-banner" id="installBanner">
+        <p>Install MacroTrack on your phone for quick access anytime.</p>
+        <button class="install-btn" id="installBtn">Install</button>
+    </div>
+
+    <!-- Protein ring -->
+    <div class="card protein-ring-container">
+        <div class="card-title" style="text-align:center; margin-bottom:12px;">Protein</div>
+        <div class="protein-ring-wrap">
+            <svg viewBox="0 0 100 100" width="180" height="180" style="transform:rotate(-90deg)">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="9"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--protein)" stroke-width="9"
+                    stroke-linecap="round" id="proteinRingCircle"
+                    stroke-dasharray="0 264"
+                    style="transition: stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1);"/>
+            </svg>
+            <div class="ring-label">
+                <div class="ring-value" id="proteinValue">0</div>
+                <div class="ring-unit" id="proteinTargetLabel">/ 0g</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mini rings -->
+    <div class="card">
+        <div class="card-title" style="text-align:center;">All Macros</div>
+        <div class="mini-rings">
+            <div class="mini-ring-wrap">
+                <svg viewBox="0 0 60 60" width="80" height="80" style="transform:rotate(-90deg)">
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--border)" stroke-width="7"/>
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--carbs)" stroke-width="7"
+                        stroke-linecap="round" id="carbsRingCircle" stroke-dasharray="0 150.8"
+                        style="transition: stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1);"/>
+                </svg>
+                <div class="mini-ring-label">
+                    <div class="val text-carbs" id="carbsValue">0g</div>
+                    <div class="sub" id="carbsTargetLabel">/ 0g</div>
+                    <div class="name" style="font-size:12px; font-weight:800; color:var(--carbs); letter-spacing:0.5px;">Carbs</div>
+                </div>
+            </div>
+            <div class="mini-ring-wrap">
+                <svg viewBox="0 0 60 60" width="80" height="80" style="transform:rotate(-90deg)">
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--border)" stroke-width="7"/>
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--fat)" stroke-width="7"
+                        stroke-linecap="round" id="fatRingCircle" stroke-dasharray="0 150.8"
+                        style="transition: stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1);"/>
+                </svg>
+                <div class="mini-ring-label">
+                    <div class="val text-fat" id="fatValue">0g</div>
+                    <div class="sub" id="fatTargetLabel">/ 0g</div>
+                    <div class="name" style="font-size:12px; font-weight:800; color:var(--fat); letter-spacing:0.5px;">Fat</div>
+                </div>
+            </div>
+            <div class="mini-ring-wrap">
+                <svg viewBox="0 0 60 60" width="80" height="80" style="transform:rotate(-90deg)">
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--border)" stroke-width="7"/>
+                    <circle cx="30" cy="30" r="24" fill="none" stroke="var(--calories)" stroke-width="7"
+                        stroke-linecap="round" id="calsRingCircle" stroke-dasharray="0 150.8"
+                        style="transition: stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1);"/>
+                </svg>
+                <div class="mini-ring-label">
+                    <div class="val text-calories" id="calsValue">0</div>
+                    <div class="sub" id="calsTargetLabel">/ 0</div>
+                    <div class="name" style="font-size:12px; font-weight:800; color:var(--text); letter-spacing:0.5px;">Calories</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calorie Counter -->
+    <div class="card calorie-counter-card">
+        <div class="card-title" style="margin-bottom:10px;">Calories</div>
+        <div class="calorie-header">
+            <div class="calorie-current-val" id="calCurrentDisplay">0</div>
+            <div class="calorie-target-val">/ <span id="calTargetDisplay">0</span> kcal</div>
+        </div>
+        <div class="calorie-bar-track">
+            <div class="calorie-bar-fill" id="calBarFill"></div>
+        </div>
+        <div class="calorie-footer">
+            <div class="calorie-remaining" id="calRemainingDisplay">0 remaining</div>
+            <div class="calorie-pct" id="calPctDisplay">0%</div>
+        </div>
+    </div>
+
+    <!-- Vitamins & Minerals Gauge -->
+    <div class="card" id="microCard">
+        <div class="card-title">Vitamins &amp; Minerals <span style="font-size:9px; font-weight:500; color:var(--text-muted); text-transform:none; letter-spacing:0;">% of daily value</span></div>
+        <div id="microGaugeContent"></div>
+    </div>
+
+    <!-- Meals list -->
+    <div class="card">
+        <div class="card-title">Today's Meals</div>
+        <div id="mealsList">
+            <div class="empty-state">
+                <div class="empty-state-icon">🍽️</div>
+                <h3>No meals logged yet</h3>
+                <p>Tap the green mic button<br>to log your first meal</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- TRENDS PAGE -->
+<!-- ============================================================ -->
+<div class="page" id="page-trends">
+    <div class="page-header">
+        <h1>Trends</h1>
+        <p>Your progress over time</p>
+    </div>
+
+    <div class="card hit-rate-card">
+        <div class="hit-rate-number" id="hitRateNumber">--</div>
+        <div class="hit-rate-label">Protein Hit Rate</div>
+        <div class="hit-rate-sub" id="hitRateSub">Days where you hit ≥80% of your protein target</div>
+    </div>
+
+    <div class="period-toggle">
+        <button class="period-btn active" data-period="7">7 Days</button>
+        <button class="period-btn" data-period="30">30 Days</button>
+        <button class="period-btn" data-period="90">90 Days</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Daily Protein vs Target</div>
+        <div class="chart-wrap"><canvas id="proteinChart"></canvas></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title" style="text-align:center;">All Macros</div>
+        <div class="chart-wrap"><canvas id="macrosChart"></canvas></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Daily Calories</div>
+        <div class="chart-wrap"><canvas id="calsChart"></canvas></div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- BODY PAGE -->
+<!-- ============================================================ -->
+<div class="page" id="page-body">
+    <div class="page-header">
+        <h1>Body</h1>
+        <p>Weight & measurements</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Log Today</div>
+        <div class="body-log-form">
+            <div class="input-wrap">
+                <div class="input-label">Weight</div>
+                <input class="input-field" id="weightInput" type="number" step="0.1" placeholder="0">
+                <div class="input-unit" id="weightUnitLabel">lbs</div>
+            </div>
+            <div class="input-wrap">
+                <div class="input-label">Waist</div>
+                <input class="input-field" id="waistInput" type="number" step="0.1" placeholder="0">
+                <div class="input-unit" id="waistUnitLabel">inches</div>
+            </div>
+        </div>
+        <button class="btn-full" id="saveBodyLogBtn">Save Log</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Weight Over Time</div>
+        <div class="chart-wrap"><canvas id="weightChart"></canvas></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Waist Over Time</div>
+        <div class="chart-wrap"><canvas id="waistChart"></canvas></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">History</div>
+        <div class="body-log-list" id="bodyLogList">
+            <div class="empty-state"><h3>No logs yet</h3><p>Start logging above</p></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SETTINGS PAGE -->
+<!-- ============================================================ -->
+<div class="page" id="page-settings">
+    <div class="page-header">
+        <h1>Settings</h1>
+        <p>Targets & preferences</p>
+    </div>
+
+    <div class="settings-section">
+        <div class="settings-title">Daily Targets</div>
+        <div class="setting-item">
+            <div class="setting-label">Protein (g)</div>
+            <input class="setting-input" id="proteinTargetInput" type="number" placeholder="150">
+        </div>
+        <div class="setting-item">
+            <div class="setting-label">Carbs (g)</div>
+            <input class="setting-input" id="carbsTargetInput" type="number" placeholder="200">
+        </div>
+        <div class="setting-item">
+            <div class="setting-label">Fat (g)</div>
+            <input class="setting-input" id="fatTargetInput" type="number" placeholder="60">
+        </div>
+        <div class="setting-item">
+            <div class="setting-label" style="display:flex;flex-direction:column;gap:2px;">
+                💪 Exercise Day<span style="font-size:10px;font-weight:500;color:var(--text-muted);">Calories</span>
+            </div>
+            <input class="setting-input" id="calsExerciseInput" type="number" placeholder="2050">
+        </div>
+        <div class="setting-item">
+            <div class="setting-label" style="display:flex;flex-direction:column;gap:2px;">
+                🛌 Rest Day<span style="font-size:10px;font-weight:500;color:var(--text-muted);">Calories</span>
+            </div>
+            <input class="setting-input" id="calsRestInput" type="number" placeholder="1850">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <div class="settings-title">Units</div>
+        <div class="setting-item">
+            <div class="setting-label">Weight</div>
+            <select class="setting-input" id="weightUnitSelect" style="background:none; border:none; color:var(--text); font-size:16px; outline:none; font-weight:600; cursor:pointer;">
+                <option value="lbs" style="background:#111a14">lbs</option>
+                <option value="kg" style="background:#111a14">kg</option>
+            </select>
+        </div>
+        <div class="setting-item">
+            <div class="setting-label">Measurement</div>
+            <select class="setting-input" id="measureUnitSelect" style="background:none; border:none; color:var(--text); font-size:16px; outline:none; font-weight:600; cursor:pointer;">
+                <option value="in" style="background:#111a14">inches</option>
+                <option value="cm" style="background:#111a14">cm</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn-full" id="saveSettingsBtn">Save Settings</button>
+
+    <div class="settings-section" style="margin-top:24px;">
+        <div class="settings-title">Favorite Foods</div>
+        <div id="favSettingsList">
+            <div class="empty-state" style="padding:20px 0;">
+                <h3>No favorites yet</h3>
+                <p>Tap "Save as Favorite" when adding<br>a food to save it here</p>
+            </div>
+        </div>
+    </div>
+    <div style="height:24px;"></div>
+</div>
 
 <script>
 // ================================================================
-// KEEP ALL OF YOUR EXISTING APP LOGIC,
-// BUT REPLACE YOUR OVERLAY / FOCUS / CLOSE LOGIC WITH THIS BLOCK.
+// MICRONUTRIENT DAILY VALUES (FDA Reference Daily Intakes)
 // ================================================================
-
 const RDI = {
     fiber:     { label: 'Fiber',      unit: 'g',   dv: 28,   group: 'Other' },
     satFat:    { label: 'Sat. Fat',   unit: 'g',   dv: 20,   group: 'Other' },
@@ -547,9 +1174,13 @@ const RDI = {
 };
 const MICRO_KEYS = Object.keys(RDI);
 
-function toggleMicroFields() {}
+function toggleMicroFields() { /* no-op — micro fields are always visible */ }
 
+// ================================================================
+// DATABASE
+// ================================================================
 let db;
+
 function initDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open('MacroTrackDB', 3);
@@ -584,6 +1215,7 @@ function dbOp(store, mode, fn) {
         r.onerror = reject;
     });
 }
+
 function dbGetAll(store, idx, q) {
     return new Promise((resolve, reject) => {
         const tx = db.transaction(store, 'readonly');
@@ -598,11 +1230,14 @@ const saveMealDB = m => dbOp('meals', 'readwrite', s => s.put(m));
 const delMealDB = id => dbOp('meals', 'readwrite', s => s.delete(id));
 const getMealsByDate = date => dbGetAll('meals', 'date', date);
 const getAllMeals = () => dbGetAll('meals');
+
 const saveBodyDB = l => dbOp('bodyLogs', 'readwrite', s => s.put(l));
 const getAllBody = () => dbGetAll('bodyLogs');
+
 const saveFavDB  = f => dbOp('favorites', 'readwrite', s => s.put(f));
 const delFavDB   = id => dbOp('favorites', 'readwrite', s => s.delete(id));
-const getAllFavs = () => dbGetAll('favorites');
+const getAllFavs  = () => dbGetAll('favorites');
+
 const saveSetting = (k, v) => dbOp('settings', 'readwrite', s => s.put({ key: k, value: v }));
 const getSetting = k => new Promise((resolve, reject) => {
     const tx = db.transaction('settings', 'readonly');
@@ -611,6 +1246,9 @@ const getSetting = k => new Promise((resolve, reject) => {
     r.onerror = reject;
 });
 
+// ================================================================
+// STATE
+// ================================================================
 let settings = {
     proteinTarget: 150,
     carbsTarget: 200,
@@ -620,112 +1258,9 @@ let settings = {
     weightUnit: 'lbs',
     measureUnit: 'in'
 };
+
+// Day type for today — 'rest' | 'exercise'; persisted per calendar date
 let todayDayType = 'rest';
-let currentTab = 'today';
-let charts = {};
-let trendPeriod = 7;
-let recognition = null;
-let finalTranscript = '';
-let deferredInstallPrompt = null;
-let editingMealId = null;
-let editingBodyId = null;
-let buildingItems = [];
-let editingBuildItemIndex = null;
-let favPickerMode = 'build';
-let saveFavOn = false;
-let baseNutrition = null;
-
-function isIOS() {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-}
-
-function isStandalone() {
-    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-}
-
-let bodyScrollY = 0;
-function lockBodyScroll() {
-    bodyScrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.classList.add('modal-open');
-    document.body.style.top = `-${bodyScrollY}px`;
-}
-
-function unlockBodyScroll() {
-    document.body.classList.remove('modal-open');
-    document.body.style.top = '';
-    window.scrollTo(0, bodyScrollY);
-}
-
-function getOpenOverlays() {
-    return [...document.querySelectorAll('.overlay.active, .method-picker-overlay.active')];
-}
-
-function openOverlay(id, focusSelector = null) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (!getOpenOverlays().length) lockBodyScroll();
-    el.classList.add('active');
-    if (focusSelector) safeFocus(focusSelector, 140);
-}
-
-function closeOverlay(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.classList.remove('active');
-    const active = document.activeElement;
-    if (active && /INPUT|TEXTAREA|SELECT/.test(active.tagName)) active.blur();
-    requestAnimationFrame(() => {
-        if (!getOpenOverlays().length) unlockBodyScroll();
-    });
-}
-
-function closeAllOverlays() {
-    document.querySelectorAll('.overlay.active, .method-picker-overlay.active').forEach(el => el.classList.remove('active'));
-    const active = document.activeElement;
-    if (active && /INPUT|TEXTAREA|SELECT/.test(active.tagName)) active.blur();
-    unlockBodyScroll();
-    stopVoice();
-    const manual = document.getElementById('manualInput');
-    if (manual) manual.value = '';
-}
-
-function safeFocus(selectorOrEl, delay = 80) {
-    const el = typeof selectorOrEl === 'string' ? document.querySelector(selectorOrEl) : selectorOrEl;
-    if (!el) return;
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            try {
-                el.focus({ preventScroll: true });
-                if (isIOS()) {
-                    el.scrollIntoView({ block: 'center', inline: 'nearest' });
-                }
-            } catch (err) {
-                try { el.focus(); } catch (_) {}
-            }
-        }, delay);
-    });
-}
-
-function installIOSInputStability() {
-    document.addEventListener('focusin', (e) => {
-        const el = e.target;
-        if (!el || !/INPUT|TEXTAREA|SELECT/.test(el.tagName)) return;
-        setTimeout(() => {
-            try { el.scrollIntoView({ block: 'center', inline: 'nearest' }); } catch (_) {}
-        }, 250);
-    });
-
-    document.addEventListener('click', (e) => {
-        const el = e.target.closest('input, textarea, select');
-        if (!el) return;
-        if (isIOS() && isStandalone()) {
-            setTimeout(() => {
-                if (document.activeElement !== el) safeFocus(el, 0);
-            }, 0);
-        }
-    }, true);
-}
 
 function activeCalsTarget() {
     return todayDayType === 'exercise' ? settings.calsExercise : settings.calsRest;
@@ -736,10 +1271,11 @@ function updateDayTypeToggle() {
     const exBtn   = document.getElementById('dayTypeBtnExercise');
     if (!restBtn || !exBtn) return;
     const isExercise = todayDayType === 'exercise';
-    restBtn.style.background = isExercise ? 'transparent' : 'var(--protein)';
-    restBtn.style.color = isExercise ? 'var(--text-muted)' : '#fff';
-    exBtn.style.background = isExercise ? 'var(--protein)' : 'transparent';
-    exBtn.style.color = isExercise ? '#fff' : 'var(--text-muted)';
+    // Active pill: green bg + white text; inactive: transparent + muted text
+    restBtn.style.background   = isExercise ? 'transparent' : 'var(--protein)';
+    restBtn.style.color        = isExercise ? 'var(--text-muted)' : '#fff';
+    exBtn.style.background     = isExercise ? 'var(--protein)' : 'transparent';
+    exBtn.style.color          = isExercise ? '#fff' : 'var(--text-muted)';
 }
 
 async function setDayType(type) {
@@ -749,12 +1285,23 @@ async function setDayType(type) {
     refreshToday();
 }
 
+let currentTab = 'today';
+let charts = {};
+let trendPeriod = 7;
+let recognition = null;
+let finalTranscript = '';
+let deferredInstallPrompt = null;
+
+// ================================================================
+// SETTINGS
+// ================================================================
 async function loadSettings() {
     const keys = ['proteinTarget','carbsTarget','fatTarget','calsExercise','calsRest','weightUnit','measureUnit'];
     for (const k of keys) {
         const v = await getSetting(k);
         if (v !== null) settings[k] = v;
     }
+    // Migrate legacy single calsTarget if it exists
     const legacyCals = await getSetting('calsTarget');
     if (legacyCals && !await getSetting('calsExercise')) {
         settings.calsExercise = legacyCals;
@@ -769,6 +1316,7 @@ async function loadSettings() {
     document.getElementById('measureUnitSelect').value = settings.measureUnit;
     updateUnitLabels();
 
+    // Load today's day type
     const savedDayType = await getSetting('dayType_' + todayStr());
     todayDayType = savedDayType || 'rest';
     updateDayTypeToggle();
@@ -793,6 +1341,9 @@ document.getElementById('saveSettingsBtn').addEventListener('click', async () =>
     refreshToday();
 });
 
+// ================================================================
+// NAVIGATION
+// ================================================================
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => switchTab(item.dataset.tab));
 });
@@ -809,57 +1360,76 @@ function switchTab(tab) {
     if (tab === 'settings') renderFavoritesSettings();
 }
 
+// ================================================================
+// DATE HELPERS
+// ================================================================
 function todayStr() { return new Date().toISOString().split('T')[0]; }
+
 function formatDate(d) {
     const [y, m, day] = d.split('-');
-    return new Date(+y, +m - 1, +day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return new Date(+y, +m-1, +day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
+
 function getDateRange(days) {
     const arr = [];
-    for (let i = days - 1; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
+    for (let i = days-1; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
         arr.push(d.toISOString().split('T')[0]);
     }
     return arr;
 }
 
+// ================================================================
+// TODAY PAGE
+// ================================================================
 function renderMicroCard(micros) {
     const card = document.getElementById('microCard');
     const content = document.getElementById('microGaugeContent');
+
     card.style.display = '';
     const hasData = MICRO_KEYS.some(k => micros[k] > 0);
     if (!hasData) {
-        content.innerHTML = `<div class="micro-empty">Log a meal and your vitamin and mineral breakdown will appear here.</div>`;
+        content.innerHTML = `<div class="micro-empty">Log a meal via Voice or Describe It and<br>your vitamin &amp; mineral breakdown will appear here.</div>`;
         return;
     }
+
     const groups = ['Vitamins', 'Minerals', 'Other'];
     let html = '';
     groups.forEach(group => {
         const keys = MICRO_KEYS.filter(k => RDI[k].group === group);
         const relevant = keys.filter(k => micros[k] > 0);
         if (!relevant.length) return;
+
         html += `<div class="micro-group-title">${group}</div>`;
         relevant.forEach(k => {
             const r = RDI[k];
             const val = micros[k];
+            const pct = Math.min(val / r.dv, 1.5); // cap at 150% for display
             const pctDisplay = Math.round((val / r.dv) * 100);
             const over = val > r.dv;
             const warn = pctDisplay >= 80 && pctDisplay < 100;
             const fillClass = over ? 'over' : (warn ? 'warn' : '');
             const fillW = Math.min((val / r.dv) * 100, 100);
+
+            // Format value nicely
             const dispVal = val < 10 ? Math.round(val * 10) / 10 : Math.round(val);
+
             html += `
             <div class="micro-row">
                 <div class="micro-label-col">
                     <div class="micro-name">${r.label}</div>
                     <div class="micro-val">${dispVal}${r.unit} / ${r.dv}${r.unit}</div>
                 </div>
-                <div class="micro-bar-track"><div class="micro-bar-fill ${fillClass}" style="width:${fillW}%"></div></div>
-                <div class="micro-pct-col"><div class="micro-pct" style="color:${over ? '#f87171' : 'var(--text-muted)'}">${pctDisplay}%</div></div>
+                <div class="micro-bar-track">
+                    <div class="micro-bar-fill ${fillClass}" style="width:${fillW}%"></div>
+                </div>
+                <div class="micro-pct-col">
+                    <div class="micro-pct" style="color:${over ? '#f87171' : 'var(--text-muted)'}">${pctDisplay}%</div>
+                </div>
             </div>`;
         });
     });
+
     content.innerHTML = html;
 }
 
@@ -868,31 +1438,41 @@ async function refreshToday() {
     const h = now.getHours();
     const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
     document.getElementById('todayGreetingLine').textContent = `${greeting}, Deep`;
-    document.getElementById('todayDateLine').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    document.getElementById('todayDateLine').textContent =
+        now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
     document.getElementById('proteinTargetLabel').textContent = `/ ${settings.proteinTarget}g`;
     document.getElementById('carbsTargetLabel').textContent = `/ ${settings.carbsTarget}g`;
     document.getElementById('fatTargetLabel').textContent = `/ ${settings.fatTarget}g`;
     document.getElementById('calsTargetLabel').textContent = `/ ${activeCalsTarget()}`;
 
     const meals = await getMealsByDate(todayStr());
+
+    // Aggregate micros from all meals (meals can have micros at top-level or inside items)
     const zeroMicros = () => Object.fromEntries(MICRO_KEYS.map(k => [k, 0]));
     const mealMicros = zeroMicros();
     meals.forEach(m => {
-        if (m.micros) MICRO_KEYS.forEach(k => { mealMicros[k] += (m.micros[k] || 0); });
+        // Top-level micros (voice/describe path)
+        if (m.micros) {
+            MICRO_KEYS.forEach(k => { mealMicros[k] += (m.micros[k] || 0); });
+        }
+        // Item-level micros (meal builder path)
         if (m.items) {
             m.items.forEach(item => {
-                if (item.micros) MICRO_KEYS.forEach(k => { mealMicros[k] += (item.micros[k] || 0); });
+                if (item.micros) {
+                    MICRO_KEYS.forEach(k => { mealMicros[k] += (item.micros[k] || 0); });
+                }
             });
         }
     });
     renderMicroCard(mealMicros);
 
     const t = meals.reduce((a, m) => ({
-        protein: a.protein + (m.protein || 0),
-        carbs: a.carbs + (m.carbs || 0),
-        fat: a.fat + (m.fat || 0),
-        calories: a.calories + (m.calories || 0)
-    }), { protein: 0, carbs: 0, fat: 0, calories: 0 });
+        protein: a.protein + (m.protein||0),
+        carbs: a.carbs + (m.carbs||0),
+        fat: a.fat + (m.fat||0),
+        calories: a.calories + (m.calories||0)
+    }), { protein:0, carbs:0, fat:0, calories:0 });
 
     setRing('proteinRingCircle', t.protein, settings.proteinTarget, 264);
     setMiniRing('carbsRingCircle', t.carbs, settings.carbsTarget);
@@ -904,6 +1484,7 @@ async function refreshToday() {
     document.getElementById('fatValue').textContent = Math.round(t.fat) + 'g';
     document.getElementById('calsValue').textContent = Math.round(t.calories);
 
+    // Calorie counter bar
     const calPct = Math.min(t.calories / (activeCalsTarget() || 1), 1);
     const calOver = t.calories > activeCalsTarget();
     const calRemaining = Math.round(activeCalsTarget() - t.calories);
@@ -912,12 +1493,13 @@ async function refreshToday() {
     const barFill = document.getElementById('calBarFill');
     barFill.style.width = (calPct * 100) + '%';
     barFill.classList.toggle('over', calOver);
-    document.getElementById('calRemainingDisplay').textContent = calOver ? `${Math.abs(calRemaining)} over target` : `${calRemaining} remaining`;
+    document.getElementById('calRemainingDisplay').textContent =
+        calOver ? `${Math.abs(calRemaining)} over target` : `${calRemaining} remaining`;
     document.getElementById('calPctDisplay').textContent = Math.round(calPct * 100) + '%';
 
     const list = document.getElementById('mealsList');
     if (!meals.length) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🍽️</div><h3>No meals logged yet</h3><p>Tap the green button to log your first meal</p></div>`;
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🍽️</div><h3>No meals logged yet</h3><p>Tap the green mic button<br>to log your first meal</p></div>`;
     } else {
         list.innerHTML = meals.map(m => `
             <div class="meal-item">
@@ -935,7 +1517,12 @@ async function refreshToday() {
                         <div class="meal-protein-lbl">protein</div>
                     </div>
                 </div>
-                <button class="meal-del" onclick="deleteMeal(${m.id})" title="Delete">✕</button>
+                <button class="meal-del" onclick="deleteMeal(${m.id})" title="Delete">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                    </svg>
+                </button>
             </div>
         `).join('');
     }
@@ -953,16 +1540,28 @@ async function deleteMeal(id) {
     showToast('Meal deleted');
 }
 
+// ================================================================
+// METHOD PICKER
+// ================================================================
 const fabMic = document.getElementById('fabMic');
-const methodPicker = document.getElementById('methodPicker');
 const voiceOverlay = document.getElementById('voiceOverlay');
+const methodPicker = document.getElementById('methodPicker');
 
-fabMic.addEventListener('click', () => openOverlay('methodPicker'));
-document.getElementById('methodCancel').addEventListener('click', () => closeOverlay('methodPicker'));
-methodPicker.addEventListener('click', (e) => { if (e.target === methodPicker) closeOverlay('methodPicker'); });
+fabMic.addEventListener('click', () => {
+    methodPicker.classList.add('active');
+});
+
+document.getElementById('methodCancel').addEventListener('click', () => {
+    methodPicker.classList.remove('active');
+});
+
+// Tap outside sheet to dismiss
+methodPicker.addEventListener('click', (e) => {
+    if (e.target === methodPicker) methodPicker.classList.remove('active');
+});
 
 document.getElementById('methodVoice').addEventListener('click', () => {
-    closeOverlay('methodPicker');
+    methodPicker.classList.remove('active');
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
         showToast('Voice not supported on this browser', 'error');
@@ -972,17 +1571,24 @@ document.getElementById('methodVoice').addEventListener('click', () => {
 });
 
 document.getElementById('methodManual').addEventListener('click', () => {
-    closeOverlay('methodPicker');
+    methodPicker.classList.remove('active');
     openMealBuilder();
 });
 
 document.getElementById('methodFavorites').addEventListener('click', () => {
-    closeOverlay('methodPicker');
+    methodPicker.classList.remove('active');
     openFoodPicker('quickadd');
 });
 
+// ================================================================
+// MEAL BUILDER
+// ================================================================
+let buildingItems = []; // array of food objects being assembled
+let editingBuildItemIndex = null; // index of item being edited in builder, or null for new
+
 function openMealBuilder(existingMeal = null) {
     if (existingMeal) {
+        // Edit mode: pre-load existing items and name
         editingMealId = existingMeal.id;
         buildingItems = (existingMeal.items || []).map(item => ({ ...item }));
         document.getElementById('buildMealName').value = existingMeal.name || '';
@@ -997,20 +1603,22 @@ function openMealBuilder(existingMeal = null) {
     }
     editingBuildItemIndex = null;
     renderBuildList();
-    openOverlay('buildMealOverlay', '#buildMealName');
+    document.getElementById('buildMealOverlay').classList.add('active');
 }
 
 function renderBuildList() {
     const list = document.getElementById('buildFoodList');
     const totalsRow = document.getElementById('buildTotalsRow');
     const emptyState = document.getElementById('buildEmptyState');
+
     if (!buildingItems.length) {
         if (!emptyState) {
-            list.innerHTML = `<div class="empty-state" style="padding:20px 0;" id="buildEmptyState"><div style="font-size:28px;margin-bottom:8px;">🥗</div><div style="font-size:13px;color:var(--text-muted);">No foods added yet.<br>Tap Add Food to start.</div></div>`;
+            list.innerHTML = `<div class="empty-state" style="padding:20px 0;" id="buildEmptyState"><div style="font-size:28px;margin-bottom:8px;">🥗</div><div style="font-size:13px;color:var(--text-muted);">No foods added yet.<br>Tap "+ Add Food" to start.</div></div>`;
         }
         totalsRow.style.display = 'none';
         return;
     }
+
     list.innerHTML = buildingItems.map((item, i) => `
         <div class="food-item-row" style="cursor:pointer;" onclick="editBuildItem(${i})">
             <div class="food-item-info" style="flex:1; min-width:0;">
@@ -1023,17 +1631,24 @@ function renderBuildList() {
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:4px; flex-shrink:0;">
-                <button onclick="event.stopPropagation(); editBuildItem(${i})" title="Edit" style="background:none; border:none; color:var(--text-muted); font-size:15px; cursor:pointer; padding:6px 4px;">✏️</button>
-                <button class="food-item-remove" onclick="event.stopPropagation(); removeBuildItem(${i})" title="Remove">✕</button>
+                <button onclick="event.stopPropagation(); editBuildItem(${i})" title="Edit"
+                    style="background:none; border:none; color:var(--text-muted); font-size:15px; cursor:pointer; padding:6px 4px;">✏️</button>
+                <button class="food-item-remove" onclick="event.stopPropagation(); removeBuildItem(${i})" title="Remove">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
             </div>
         </div>
     `).join('');
+
     const totals = buildingItems.reduce((a, item) => ({
         protein: a.protein + item.protein,
         carbs: a.carbs + item.carbs,
         fat: a.fat + item.fat,
         calories: a.calories + item.calories
-    }), { protein: 0, carbs: 0, fat: 0, calories: 0 });
+    }), { protein:0, carbs:0, fat:0, calories:0 });
+
     document.getElementById('buildTotalProtein').textContent = Math.round(totals.protein) + 'g';
     document.getElementById('buildTotalCarbs').textContent = Math.round(totals.carbs) + 'g';
     document.getElementById('buildTotalFat').textContent = Math.round(totals.fat) + 'g';
@@ -1048,11 +1663,11 @@ function removeBuildItem(index) {
 
 function editBuildItem(index) {
     editingBuildItemIndex = index;
-    openFoodDetail(buildingItems[index], false);
+    openFoodDetail(buildingItems[index], false); // pre-fill, hide Save as Favorite
 }
 
 document.getElementById('cancelBuildMeal').addEventListener('click', () => {
-    closeOverlay('buildMealOverlay');
+    document.getElementById('buildMealOverlay').classList.remove('active');
     buildingItems = [];
     editingMealId = null;
 });
@@ -1061,32 +1676,41 @@ document.getElementById('saveBuildMeal').addEventListener('click', async () => {
     if (!buildingItems.length) { showToast('Add at least one food item', 'error'); return; }
     const name = document.getElementById('buildMealName').value.trim() || 'Meal';
     const totals = buildingItems.reduce((a, item) => ({
-        protein: a.protein + (item.protein || 0),
-        carbs: a.carbs + (item.carbs || 0),
-        fat: a.fat + (item.fat || 0),
+        protein:  a.protein  + (item.protein  || 0),
+        carbs:    a.carbs    + (item.carbs    || 0),
+        fat:      a.fat      + (item.fat      || 0),
         calories: a.calories + (item.calories || 0)
-    }), { protein: 0, carbs: 0, fat: 0, calories: 0 });
+    }), { protein:0, carbs:0, fat:0, calories:0 });
+
     const record = {
-        id: editingMealId || Date.now(),
-        date: editingMealId ? (await getAllMeals()).find(m => m.id === editingMealId)?.date || todayStr() : todayStr(),
+        // Keep original id + date if editing, otherwise create new
+        id:       editingMealId || Date.now(),
+        date:     editingMealId ? (await getAllMeals()).find(m => m.id === editingMealId)?.date || todayStr() : todayStr(),
         name,
-        items: [...buildingItems],
-        protein: Math.round(totals.protein),
-        carbs: Math.round(totals.carbs),
-        fat: Math.round(totals.fat),
+        items:    [...buildingItems],
+        protein:  Math.round(totals.protein),
+        carbs:    Math.round(totals.carbs),
+        fat:      Math.round(totals.fat),
         calories: Math.round(totals.calories),
-        ts: new Date().toISOString()
+        ts:       new Date().toISOString()
     };
     await saveMealDB(record);
-    closeOverlay('buildMealOverlay');
+    document.getElementById('buildMealOverlay').classList.remove('active');
     buildingItems = [];
     const wasEditing = !!editingMealId;
     editingMealId = null;
-    showToast(wasEditing ? 'Meal updated' : 'Meal saved', 'success');
+    showToast(wasEditing ? 'Meal updated ✓' : 'Meal saved!', 'success');
     refreshToday();
 });
 
-document.getElementById('buildAddFoodBtn').addEventListener('click', () => openFoodPicker());
+document.getElementById('buildAddFoodBtn').addEventListener('click', () => {
+    openFoodPicker();
+});
+
+// ================================================================
+// FOOD PICKER
+// ================================================================
+let favPickerMode = 'build'; // 'build' | 'quickadd'
 
 async function openFoodPicker(mode = 'build') {
     favPickerMode = mode;
@@ -1095,11 +1719,15 @@ async function openFoodPicker(mode = 'build') {
     const sub = document.getElementById('foodPickerSub');
     const newFoodBtn = document.getElementById('pickNewFoodBtn');
     const isQuick = mode === 'quickadd';
+
     document.getElementById('foodPickerTitle').textContent = isQuick ? 'Quick Add' : 'Add Food';
     newFoodBtn.style.display = isQuick ? 'none' : '';
+
     if (favs.length) {
         section.style.display = 'block';
-        sub.textContent = isQuick ? 'Tap + to instantly log a favorite as today\'s meal' : 'Pick a favorite or enter a new food';
+        sub.textContent = isQuick
+            ? 'Tap ⊕ to instantly log a favorite as today\'s meal'
+            : 'Pick a favorite or enter a new food';
         document.getElementById('favPickerList').innerHTML = favs.map(f => `
             <div class="fav-pick-card" style="${isQuick ? 'cursor:default;' : ''}" ${!isQuick ? `onclick="pickFavorite(${f.id})"` : ''}>
                 <div class="fav-pick-star">⭐</div>
@@ -1107,22 +1735,28 @@ async function openFoodPicker(mode = 'build') {
                     <div class="fav-pick-name">${f.name}</div>
                     <div class="fav-pick-macros">P: ${f.protein}g &nbsp;C: ${f.carbs}g &nbsp;F: ${f.fat}g &nbsp;${f.calories} kcal</div>
                 </div>
-                ${isQuick ? `<button onclick="quickAddFav(${f.id})" style="background:var(--protein);border:none;color:#0a110d;font-size:18px;font-weight:700;width:36px;height:36px;border-radius:50%;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>` : `<span style="color:var(--text-muted);">›</span>`}
+                ${isQuick
+                    ? `<button onclick="quickAddFav(${f.id})" style="background:var(--protein);border:none;color:#0a110d;font-size:18px;font-weight:700;width:36px;height:36px;border-radius:50%;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;line-height:1;">+</button>`
+                    : `<svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>`
+                }
             </div>
         `).join('');
     } else {
         section.style.display = isQuick ? 'block' : 'none';
-        if (isQuick) document.getElementById('favPickerList').innerHTML = `<div class="micro-empty" style="padding:24px 0;">No favorites saved yet.<br>Save foods when building meals to use them here.</div>`;
+        if (isQuick) {
+            document.getElementById('favPickerList').innerHTML = `<div class="micro-empty" style="padding:24px 0;">No favorites saved yet.<br>Save foods when building meals to use them here.</div>`;
+        }
         sub.textContent = isQuick ? '' : 'Enter a new food to add it to your meal';
     }
-    openOverlay('foodPickerOverlay');
+    document.getElementById('foodPickerOverlay').classList.add('active');
 }
 
 async function pickFavorite(id) {
     const favs = await getAllFavs();
     const fav = favs.find(f => f.id === id);
     if (!fav) return;
-    closeOverlay('foodPickerOverlay');
+    document.getElementById('foodPickerOverlay').classList.remove('active');
+    // Pre-fill form but turn off save-as-favorite (it's already saved)
     openFoodDetail(fav, false);
 }
 
@@ -1130,8 +1764,8 @@ async function quickAddFav(id) {
     const favs = await getAllFavs();
     const fav = favs.find(f => f.id === id);
     if (!fav) return;
-    closeOverlay('foodPickerOverlay');
-    closeOverlay('methodPicker');
+    document.getElementById('foodPickerOverlay').classList.remove('active');
+    methodPicker.classList.remove('active');
     await saveMealDB({
         id: Date.now(),
         date: todayStr(),
@@ -1143,21 +1777,31 @@ async function quickAddFav(id) {
         micros: fav.micros || {},
         ts: new Date().toISOString()
     });
-    showToast(`${fav.name} logged`, 'success');
+    showToast(`${fav.name} logged ✓`, 'success');
     refreshToday();
 }
 
 document.getElementById('pickNewFoodBtn').addEventListener('click', () => {
-    closeOverlay('foodPickerOverlay');
-    openFoodDetail(null, true);
+    document.getElementById('foodPickerOverlay').classList.remove('active');
+    openFoodDetail(null, true); // open blank, show save-as-fav toggle on by default
 });
-document.getElementById('cancelFoodPicker').addEventListener('click', () => closeOverlay('foodPickerOverlay'));
 
+document.getElementById('cancelFoodPicker').addEventListener('click', () => {
+    document.getElementById('foodPickerOverlay').classList.remove('active');
+});
+
+// ================================================================
+// FAVORITES — SETTINGS RENDERING
+// ================================================================
 async function renderFavoritesSettings() {
     const favs = await getAllFavs();
     const container = document.getElementById('favSettingsList');
     if (!favs.length) {
-        container.innerHTML = `<div class="empty-state" style="padding:20px 0;"><h3>No favorites yet</h3><p>Tap Save as Favorite when adding a food to save it here</p></div>`;
+        container.innerHTML = `
+            <div class="empty-state" style="padding:20px 0;">
+                <h3>No favorites yet</h3>
+                <p>Tap "Save as Favorite" when adding<br>a food to save it here</p>
+            </div>`;
         return;
     }
     container.innerHTML = favs.map(f => `
@@ -1179,20 +1823,30 @@ async function deleteFavorite(id) {
     renderFavoritesSettings();
 }
 
+// ================================================================
+// FOOD DETAIL FORM
+// ================================================================
+let saveFavOn = false;
+
 function toggleSaveFav() {
     saveFavOn = !saveFavOn;
     document.getElementById('saveFavToggle').classList.toggle('on', saveFavOn);
 }
 
+// Base nutrition per 1 unit — set when form opens or AI fills; used by stepper to scale
+let baseNutrition = null;
+
 function captureBaseNutrition() {
     const qty = parseFloat(document.getElementById('foodDetailQty').value) || 1;
     const r = v => (parseFloat(v) || 0) / qty;
     const micros = {};
-    MICRO_KEYS.forEach(k => { micros[k] = (parseFloat(document.getElementById('mf_' + k).value) || 0) / qty; });
+    MICRO_KEYS.forEach(k => {
+        micros[k] = (parseFloat(document.getElementById('mf_' + k).value) || 0) / qty;
+    });
     baseNutrition = {
-        protein: r(document.getElementById('foodDetailProtein').value),
-        carbs: r(document.getElementById('foodDetailCarbs').value),
-        fat: r(document.getElementById('foodDetailFat').value),
+        protein:  r(document.getElementById('foodDetailProtein').value),
+        carbs:    r(document.getElementById('foodDetailCarbs').value),
+        fat:      r(document.getElementById('foodDetailFat').value),
         calories: r(document.getElementById('foodDetailCalories').value),
         micros
     };
@@ -1200,11 +1854,11 @@ function captureBaseNutrition() {
 
 function applyBaseToQty(qty) {
     if (!baseNutrition || qty <= 0) return;
-    const r1 = v => Math.round(v * 10) / 10;
-    const ri = v => Math.round(v);
-    document.getElementById('foodDetailProtein').value = r1(baseNutrition.protein * qty) || '';
-    document.getElementById('foodDetailCarbs').value = r1(baseNutrition.carbs * qty) || '';
-    document.getElementById('foodDetailFat').value = r1(baseNutrition.fat * qty) || '';
+    const r1 = v => Math.round(v * 10) / 10;  // 1 decimal for macros
+    const ri = v => Math.round(v);             // integer for calories
+    document.getElementById('foodDetailProtein').value  = r1(baseNutrition.protein  * qty) || '';
+    document.getElementById('foodDetailCarbs').value    = r1(baseNutrition.carbs    * qty) || '';
+    document.getElementById('foodDetailFat').value      = r1(baseNutrition.fat      * qty) || '';
     document.getElementById('foodDetailCalories').value = ri(baseNutrition.calories * qty) || '';
     MICRO_KEYS.forEach(k => {
         const val = r1(baseNutrition.micros[k] * qty);
@@ -1214,49 +1868,62 @@ function applyBaseToQty(qty) {
 
 function stepQty(delta) {
     const input = document.getElementById('foodDetailQty');
-    const unit = document.getElementById('foodDetailUnit').value;
+    const unit  = document.getElementById('foodDetailUnit').value;
+    // Step sizes: discrete units step by 1, weight/volume by sensible amounts
     let step = 1;
     if (unit === 'g' || unit === 'ml') step = 10;
     else if (unit === 'oz') step = 0.5;
     else if (unit === 'lbs') step = 0.25;
+
+    // Capture base on first tap (lazy), so we scale from whatever is currently filled in
     if (!baseNutrition) captureBaseNutrition();
+
     let current = parseFloat(input.value) || 0;
     let next = Math.max(step, parseFloat((current + delta * step).toFixed(3)));
     input.value = next % 1 === 0 ? String(next) : String(next);
+
+    // Scale all nutrition fields proportionally
     applyBaseToQty(next);
     input.dispatchEvent(new Event('input'));
 }
-window.stepQty = stepQty;
-window.toggleSaveFav = toggleSaveFav;
 
 function openFoodDetail(prefill = null, showSaveFav = true) {
     document.getElementById('foodDetailName').value = prefill?.name || '';
-    document.getElementById('foodDetailQty').value = prefill?.qty != null ? prefill.qty : '1';
+    document.getElementById('foodDetailQty').value  = prefill?.qty != null ? prefill.qty : '1';
     document.getElementById('foodDetailUnit').value = prefill?.unit || 'servings';
     document.getElementById('foodDetailProtein').value = prefill?.protein ?? '';
     document.getElementById('foodDetailCarbs').value = prefill?.carbs ?? '';
     document.getElementById('foodDetailFat').value = prefill?.fat ?? '';
     document.getElementById('foodDetailCalories').value = prefill?.calories ?? '';
+    // Reset micros
     MICRO_KEYS.forEach(k => {
         const el = document.getElementById('mf_' + k);
         el.value = (prefill?.micros?.[k] != null && prefill.micros[k] !== 0) ? prefill.micros[k] : '';
     });
+    // Reset toggle
     saveFavOn = false;
     document.getElementById('saveFavToggle').classList.remove('on');
     document.getElementById('saveFavRow').style.display = showSaveFav ? 'flex' : 'none';
     const overlay = document.getElementById('foodDetailOverlay');
+    overlay.classList.add('active');
     overlay.scrollTop = 0;
-    if (prefill && prefill.qty && (prefill.protein || prefill.carbs || prefill.fat || prefill.calories)) captureBaseNutrition();
-    else baseNutrition = null;
-    openOverlay('foodDetailOverlay', '#foodDetailName');
+
+    // Precompute base nutrition so stepper can scale from the start
+    // If prefill has both qty and at least one macro value, compute base; otherwise clear
+    if (prefill && prefill.qty && (prefill.protein || prefill.carbs || prefill.fat || prefill.calories)) {
+        captureBaseNutrition();
+    } else {
+        baseNutrition = null; // will be captured lazily on first stepper tap
+    }
 }
 
 document.getElementById('cancelFoodDetail').addEventListener('click', () => {
-    closeOverlay('foodDetailOverlay');
+    document.getElementById('foodDetailOverlay').classList.remove('active');
     if (editingBuildItemIndex !== null) {
+        // Came from editing an existing item — go back to the builder
         editingBuildItemIndex = null;
-        openOverlay('buildMealOverlay');
     } else {
+        // Came from adding a new food — go back to food picker
         openFoodPicker();
     }
 });
@@ -1264,8 +1931,9 @@ document.getElementById('cancelFoodDetail').addEventListener('click', () => {
 document.getElementById('confirmFoodDetail').addEventListener('click', async () => {
     const name = document.getElementById('foodDetailName').value.trim();
     if (!name) { showToast('Enter a food name', 'error'); return; }
-    const qty = document.getElementById('foodDetailQty').value.trim();
+    const qty  = document.getElementById('foodDetailQty').value.trim();
     const unit = document.getElementById('foodDetailUnit').value;
+    // Append quantity to display name if provided
     const displayName = qty ? `${name} (${qty}${unit})` : name;
     const micros = {};
     MICRO_KEYS.forEach(k => {
@@ -1277,15 +1945,16 @@ document.getElementById('confirmFoodDetail').addEventListener('click', async () 
         qty: qty || null,
         unit,
         protein: parseFloat(document.getElementById('foodDetailProtein').value) || 0,
-        carbs: parseFloat(document.getElementById('foodDetailCarbs').value) || 0,
-        fat: parseFloat(document.getElementById('foodDetailFat').value) || 0,
-        calories: parseFloat(document.getElementById('foodDetailCalories').value) || 0,
+        carbs:   parseFloat(document.getElementById('foodDetailCarbs').value) || 0,
+        fat:     parseFloat(document.getElementById('foodDetailFat').value) || 0,
+        calories:parseFloat(document.getElementById('foodDetailCalories').value) || 0,
         micros,
     };
     if (saveFavOn) {
         await saveFavDB({ id: Date.now(), ...item });
-        showToast(`Saved ${displayName} to favorites`, 'success');
+        showToast(`"${displayName}" saved to favorites ⭐`, 'success');
     }
+    // Replace existing item or append new
     if (editingBuildItemIndex !== null) {
         buildingItems[editingBuildItemIndex] = item;
         editingBuildItemIndex = null;
@@ -1294,11 +1963,13 @@ document.getElementById('confirmFoodDetail').addEventListener('click', async () 
     }
     saveFavOn = false;
     document.getElementById('saveFavToggle').classList.remove('on');
-    closeOverlay('foodDetailOverlay');
-    openOverlay('buildMealOverlay');
+    document.getElementById('foodDetailOverlay').classList.remove('active');
     renderBuildList();
 });
 
+// ================================================================
+// VOICE RECORDING
+// ================================================================
 function showStep(step) {
     document.getElementById('listeningState').style.display = step === 'listen' ? '' : 'none';
     document.getElementById('processingState').style.display = step === 'process' ? '' : 'none';
@@ -1312,6 +1983,7 @@ function startVoice() {
     recognition.interimResults = true;
     recognition.lang = 'en-US';
     finalTranscript = '';
+
     recognition.onresult = (e) => {
         let interim = '';
         for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -1326,14 +1998,16 @@ function startVoice() {
             el.style.fontStyle = 'normal';
         }
     };
+
     recognition.onerror = () => {
-        showToast('Mic error. Switching to text input', 'error');
+        showToast('Mic error — switching to text input', 'error');
         stopVoice();
-        closeOverlay('voiceOverlay');
-        openOverlay('manualOverlay', '#manualInput');
+        voiceOverlay.classList.remove('active');
+        document.getElementById('manualOverlay').classList.add('active');
     };
+
     recognition.start();
-    openOverlay('voiceOverlay');
+    voiceOverlay.classList.add('active');
     showStep('listen');
     fabMic.classList.add('recording');
     document.getElementById('liveTranscript').textContent = 'Speak now...';
@@ -1342,56 +2016,97 @@ function startVoice() {
 }
 
 function stopVoice() {
-    if (recognition) {
-        recognition.stop();
-        recognition = null;
-    }
+    if (recognition) { recognition.stop(); recognition = null; }
     fabMic.classList.remove('recording');
 }
 
 document.getElementById('stopListening').addEventListener('click', () => {
     stopVoice();
     const text = finalTranscript.trim();
-    if (!text) { showToast('Nothing captured. Try again', 'error'); closeAllOverlays(); return; }
-    closeAllOverlays();
+    if (!text) { showToast('Nothing captured, try again', 'error'); closeOverlays(); return; }
+    closeOverlays();
+    // Pre-fill food name from spoken text — user enters macros manually
     openMealBuilder();
-    setTimeout(() => openFoodDetail({ name: text }), 120);
+    setTimeout(() => openFoodDetail({ name: text }), 100);
 });
 
-document.getElementById('cancelVoice').addEventListener('click', () => { stopVoice(); closeAllOverlays(); });
+document.getElementById('cancelVoice').addEventListener('click', () => { stopVoice(); closeOverlays(); });
 document.getElementById('redoVoice').addEventListener('click', () => { showStep('listen'); startVoice(); });
-document.getElementById('cancelManual').addEventListener('click', closeAllOverlays);
+
+// Manual fallback (kept for typing food name quickly)
+document.getElementById('cancelManual').addEventListener('click', closeOverlays);
 document.getElementById('analyzeManual').addEventListener('click', () => {
     const text = document.getElementById('manualInput').value.trim();
     if (!text) return;
-    closeAllOverlays();
+    closeOverlays();
     openMealBuilder();
-    setTimeout(() => openFoodDetail({ name: text }), 120);
+    setTimeout(() => openFoodDetail({ name: text }), 100);
 });
 
-function closeOverlays() { closeAllOverlays(); }
-window.closeOverlays = closeOverlays;
+
+// ================================================================
+// SAVE MEAL
+// ================================================================
+document.getElementById('saveMealBtn').addEventListener('click', async () => {
+    const meal = {
+        id: Date.now(),
+        date: todayStr(),
+        name: document.getElementById('mealNameDisplay').textContent,
+        protein: parseFloat(document.getElementById('editProtein').value) || 0,
+        carbs: parseFloat(document.getElementById('editCarbs').value) || 0,
+        fat: parseFloat(document.getElementById('editFat').value) || 0,
+        calories: parseFloat(document.getElementById('editCalories').value) || 0,
+        micros: window._parsedMicros || {},
+        ts: new Date().toISOString()
+    };
+    window._parsedMicros = {};
+    await saveMealDB(meal);
+    closeOverlays();
+    showToast('Meal saved!', 'success');
+    refreshToday();
+});
+
+function closeOverlays() {
+    voiceOverlay.classList.remove('active');
+    document.getElementById('manualOverlay').classList.remove('active');
+    document.getElementById('editMealOverlay').classList.remove('active');
+    document.getElementById('buildMealOverlay').classList.remove('active');
+    document.getElementById('foodDetailOverlay').classList.remove('active');
+    document.getElementById('foodPickerOverlay').classList.remove('active');
+    document.getElementById('editBodyOverlay').classList.remove('active');
+    document.getElementById('methodPicker').classList.remove('active');
+    stopVoice();
+    document.getElementById('manualInput').value = '';
+}
+
+// ================================================================
+// EDIT MEAL
+// ================================================================
+let editingMealId = null;
 
 async function openEditMeal(id) {
     const allMeals = await getAllMeals();
     const meal = allMeals.find(m => m.id === id);
     if (!meal) return;
+
+    // Meals with items → reopen in meal builder for full item-level editing
     if (meal.items && meal.items.length) {
         openMealBuilder(meal);
         return;
     }
+
+    // Voice/describe meals → simple aggregate edit overlay
     editingMealId = id;
     document.getElementById('editMealName').value = meal.name || '';
     document.getElementById('editMealProtein').value = Math.round(meal.protein || 0);
     document.getElementById('editMealCarbs').value = Math.round(meal.carbs || 0);
     document.getElementById('editMealFat').value = Math.round(meal.fat || 0);
     document.getElementById('editMealCalories').value = Math.round(meal.calories || 0);
-    openOverlay('editMealOverlay', '#editMealName');
+    document.getElementById('editMealOverlay').classList.add('active');
 }
-window.openEditMeal = openEditMeal;
 
 document.getElementById('cancelEditMeal').addEventListener('click', () => {
-    closeOverlay('editMealOverlay');
+    document.getElementById('editMealOverlay').classList.remove('active');
     editingMealId = null;
 });
 
@@ -1409,26 +2124,34 @@ document.getElementById('saveEditMeal').addEventListener('click', async () => {
         calories: parseFloat(document.getElementById('editMealCalories').value) || 0,
     };
     await saveMealDB(updated);
-    closeOverlay('editMealOverlay');
+    document.getElementById('editMealOverlay').classList.remove('active');
     editingMealId = null;
     showToast('Meal updated', 'success');
     refreshToday();
 });
 
+// ================================================================
+// BODY LOGGING
+// ================================================================
 document.getElementById('saveBodyLogBtn').addEventListener('click', async () => {
     const weight = parseFloat(document.getElementById('weightInput').value);
     const waist = parseFloat(document.getElementById('waistInput').value);
     if (!weight && !waist) { showToast('Enter at least one value', 'error'); return; }
-    await saveBodyDB({ id: Date.now(), date: todayStr(), weight: weight || null, waist: waist || null, ts: new Date().toISOString() });
+    await saveBodyDB({
+        id: Date.now(), date: todayStr(),
+        weight: weight || null, waist: waist || null,
+        ts: new Date().toISOString()
+    });
     document.getElementById('weightInput').value = '';
     document.getElementById('waistInput').value = '';
-    showToast('Logged', 'success');
+    showToast('Logged!', 'success');
     renderBody();
 });
 
 async function renderBody() {
-    const logs = (await getAllBody()).sort((a, b) => a.date.localeCompare(b.date));
+    const logs = (await getAllBody()).sort((a,b) => a.date.localeCompare(b.date));
     const list = document.getElementById('bodyLogList');
+
     if (!logs.length) {
         list.innerHTML = '<div class="empty-state"><h3>No logs yet</h3><p>Start logging above</p></div>';
     } else {
@@ -1438,15 +2161,21 @@ async function renderBody() {
                     <div class="body-log-date">${formatDate(l.date)}</div>
                     <div class="body-log-vals">
                         ${l.weight ? `<div class="body-log-val"><div class="val">${l.weight}</div><div class="lbl">${settings.weightUnit}</div></div>` : ''}
-                        ${l.waist ? `<div class="body-log-val"><div class="val">${l.waist}</div><div class="lbl">waist</div></div>` : ''}
+                        ${l.waist ? `<div class="body-log-val"><div class="val">${l.waist}"</div><div class="lbl">waist</div></div>` : ''}
                     </div>
                 </div>
-                <button onclick="openEditBodyLog(${l.id})" style="background:none; border:none; color:#888; font-size:18px; cursor:pointer; padding:8px; flex-shrink:0;">✏️</button>
+                <button onclick="openEditBodyLog(${l.id})" style="background:none; border:none; color:#888; font-size:18px; cursor:pointer; padding:8px; flex-shrink:0;" title="Edit">✏️</button>
             </div>
         `).join('');
     }
+
     renderBodyCharts(logs);
 }
+
+// ================================================================
+// EDIT BODY LOG
+// ================================================================
+let editingBodyId = null;
 
 async function openEditBodyLog(id) {
     const logs = await getAllBody();
@@ -1457,9 +2186,8 @@ async function openEditBodyLog(id) {
     document.getElementById('editBodyWaist').value = log.waist || '';
     document.getElementById('editBodyWeightUnit').textContent = settings.weightUnit || 'lbs';
     document.getElementById('editBodyWaistUnit').textContent = settings.measureUnit === 'cm' ? 'cm' : 'in';
-    openOverlay('editBodyOverlay', '#editBodyWeight');
+    document.getElementById('editBodyOverlay').classList.add('active');
 }
-window.openEditBodyLog = openEditBodyLog;
 
 document.getElementById('saveEditBody').addEventListener('click', async () => {
     if (editingBodyId === null) return;
@@ -1469,16 +2197,20 @@ document.getElementById('saveEditBody').addEventListener('click', async () => {
     const w = parseFloat(document.getElementById('editBodyWeight').value);
     const wa = parseFloat(document.getElementById('editBodyWaist').value);
     await saveBodyDB({ ...log, weight: isNaN(w) ? null : w, waist: isNaN(wa) ? null : wa });
-    closeOverlay('editBodyOverlay');
+    document.getElementById('editBodyOverlay').classList.remove('active');
     showToast('Log updated', 'success');
     renderBody();
 });
-document.getElementById('cancelEditBody').addEventListener('click', () => closeOverlay('editBodyOverlay'));
+
+document.getElementById('cancelEditBody').addEventListener('click', () => {
+    document.getElementById('editBodyOverlay').classList.remove('active');
+});
+
 document.getElementById('deleteBodyLogBtn').addEventListener('click', async () => {
     if (editingBodyId === null) return;
     if (!confirm('Delete this body log entry?')) return;
     await dbOp('bodyLogs', 'readwrite', s => s.delete(editingBodyId));
-    closeOverlay('editBodyOverlay');
+    document.getElementById('editBodyOverlay').classList.remove('active');
     showToast('Entry deleted', 'success');
     renderBody();
 });
@@ -1486,24 +2218,35 @@ document.getElementById('deleteBodyLogBtn').addEventListener('click', async () =
 function renderBodyCharts(logs) {
     const wLogs = logs.filter(l => l.weight);
     const waLogs = logs.filter(l => l.waist);
+
     if (charts.weight) { charts.weight.destroy(); charts.weight = null; }
     if (wLogs.length > 1) {
         charts.weight = new Chart(document.getElementById('weightChart'), {
             type: 'line',
-            data: { labels: wLogs.map(l => formatDate(l.date)), datasets: [{ data: wLogs.map(l => l.weight), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#10b981' }] },
+            data: {
+                labels: wLogs.map(l => formatDate(l.date)),
+                datasets: [{ data: wLogs.map(l => l.weight), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#10b981' }]
+            },
             options: chartOpts(settings.weightUnit)
         });
     }
+
     if (charts.waist) { charts.waist.destroy(); charts.waist = null; }
     if (waLogs.length > 1) {
         charts.waist = new Chart(document.getElementById('waistChart'), {
             type: 'line',
-            data: { labels: waLogs.map(l => formatDate(l.date)), datasets: [{ data: waLogs.map(l => l.waist), borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.08)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#f87171' }] },
+            data: {
+                labels: waLogs.map(l => formatDate(l.date)),
+                datasets: [{ data: waLogs.map(l => l.waist), borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.08)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#f87171' }]
+            },
             options: chartOpts(settings.measureUnit === 'in' ? 'in' : 'cm')
         });
     }
 }
 
+// ================================================================
+// TRENDS
+// ================================================================
 document.querySelectorAll('.period-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
@@ -1518,36 +2261,56 @@ async function renderTrends() {
     const dates = getDateRange(trendPeriod);
     const byDate = {};
     allMeals.forEach(m => { if (!byDate[m.date]) byDate[m.date] = []; byDate[m.date].push(m); });
+
     const daily = dates.map(date => {
         const ms = byDate[date] || [];
         return {
             date,
             logged: ms.length > 0,
-            protein: ms.reduce((s, m) => s + (m.protein || 0), 0),
-            carbs: ms.reduce((s, m) => s + (m.carbs || 0), 0),
-            fat: ms.reduce((s, m) => s + (m.fat || 0), 0),
-            calories: ms.reduce((s, m) => s + (m.calories || 0), 0)
+            protein: ms.reduce((s,m) => s+(m.protein||0), 0),
+            carbs: ms.reduce((s,m) => s+(m.carbs||0), 0),
+            fat: ms.reduce((s,m) => s+(m.fat||0), 0),
+            calories: ms.reduce((s,m) => s+(m.calories||0), 0)
         };
     });
+
     const logged = daily.filter(d => d.logged);
     const hit = logged.filter(d => d.protein >= settings.proteinTarget * 0.8);
     const rate = logged.length ? Math.round((hit.length / logged.length) * 100) : null;
-    document.getElementById('hitRateNumber').textContent = rate !== null ? rate + '%' : '--';
-    document.getElementById('hitRateSub').textContent = logged.length ? `${hit.length} of ${logged.length} logged days hit at least 80% of your ${settings.proteinTarget}g target` : 'No data logged in this period';
 
+    document.getElementById('hitRateNumber').textContent = rate !== null ? rate + '%' : '--';
+    document.getElementById('hitRateSub').textContent = logged.length
+        ? `${hit.length} of ${logged.length} logged days hit ≥80% of your ${settings.proteinTarget}g target`
+        : 'No data logged in this period';
+
+    // Protein bar chart
     if (charts.protein) { charts.protein.destroy(); charts.protein = null; }
     charts.protein = new Chart(document.getElementById('proteinChart'), {
         type: 'bar',
         data: {
             labels: daily.map(d => formatDate(d.date)),
             datasets: [
-                { label: 'Protein (g)', data: daily.map(d => d.logged ? Math.round(d.protein) : null), backgroundColor: daily.map(d => d.protein >= settings.proteinTarget * 0.8 ? 'rgba(16,185,129,0.85)' : 'rgba(16,185,129,0.3)'), borderRadius: 5 },
-                { label: 'Target', data: daily.map(() => settings.proteinTarget), type: 'line', borderColor: 'rgba(16,185,129,0.4)', borderDash: [5, 5], pointRadius: 0, fill: false }
+                {
+                    label: 'Protein (g)',
+                    data: daily.map(d => d.logged ? Math.round(d.protein) : null),
+                    backgroundColor: daily.map(d => d.protein >= settings.proteinTarget * 0.8 ? 'rgba(16,185,129,0.85)' : 'rgba(16,185,129,0.3)'),
+                    borderRadius: 5
+                },
+                {
+                    label: 'Target',
+                    data: daily.map(() => settings.proteinTarget),
+                    type: 'line',
+                    borderColor: 'rgba(16,185,129,0.4)',
+                    borderDash: [5,5],
+                    pointRadius: 0,
+                    fill: false
+                }
             ]
         },
         options: chartOpts('g', true)
     });
 
+    // All macros line chart
     if (charts.macros) { charts.macros.destroy(); charts.macros = null; }
     charts.macros = new Chart(document.getElementById('macrosChart'), {
         type: 'line',
@@ -1562,26 +2325,46 @@ async function renderTrends() {
         options: chartOpts('g', true)
     });
 
+    // Calories chart
     if (charts.cals) { charts.cals.destroy(); charts.cals = null; }
     charts.cals = new Chart(document.getElementById('calsChart'), {
         type: 'bar',
         data: {
             labels: daily.map(d => formatDate(d.date)),
             datasets: [
-                { label: 'Calories', data: daily.map(d => d.logged ? Math.round(d.calories) : null), backgroundColor: daily.map(d => d.calories >= activeCalsTarget() * 0.8 ? 'rgba(107,114,128,0.85)' : 'rgba(107,114,128,0.35)'), borderRadius: 5 },
-                { label: 'Target', data: daily.map(() => activeCalsTarget()), type: 'line', borderColor: 'rgba(107,114,128,0.4)', borderDash: [5, 5], pointRadius: 0, fill: false }
+                {
+                    label: 'Calories',
+                    data: daily.map(d => d.logged ? Math.round(d.calories) : null),
+                    backgroundColor: daily.map(d => d.calories >= activeCalsTarget() * 0.8 ? 'rgba(107,114,128,0.85)' : 'rgba(107,114,128,0.35)'),
+                    borderRadius: 5
+                },
+                {
+                    label: 'Target',
+                    data: daily.map(() => activeCalsTarget()),
+                    type: 'line',
+                    borderColor: 'rgba(107,114,128,0.4)',
+                    borderDash: [5,5],
+                    pointRadius: 0,
+                    fill: false
+                }
             ]
         },
         options: chartOpts('kcal', true)
     });
 }
 
+// ================================================================
+// CHART HELPER
+// ================================================================
 function chartOpts(unit = 'g', legend = false) {
     return {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-            legend: { display: legend, labels: { color: '#666', font: { size: 11 }, boxWidth: 10 } },
+            legend: {
+                display: legend,
+                labels: { color: '#666', font: { size: 11 }, boxWidth: 10 }
+            },
             tooltip: {
                 backgroundColor: '#182018',
                 titleColor: '#777',
@@ -1598,6 +2381,9 @@ function chartOpts(unit = 'g', legend = false) {
     };
 }
 
+// ================================================================
+// TOAST
+// ================================================================
 function showToast(msg, type = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1606,6 +2392,9 @@ function showToast(msg, type = '') {
     t._timer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// ================================================================
+// PWA INSTALL
+// ================================================================
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
@@ -1620,25 +2409,10 @@ document.getElementById('installBtn').addEventListener('click', async () => {
     deferredInstallPrompt = null;
 });
 
-function installNumericInputHints() {
-    document.querySelectorAll('input[type="number"]').forEach(el => {
-        el.setAttribute('inputmode', 'decimal');
-        el.setAttribute('enterkeyhint', 'done');
-        el.setAttribute('autocomplete', 'off');
-        el.setAttribute('autocorrect', 'off');
-        el.setAttribute('spellcheck', 'false');
-    });
-    document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-        el.setAttribute('enterkeyhint', 'done');
-        el.setAttribute('autocomplete', 'off');
-        el.setAttribute('autocorrect', 'off');
-        el.setAttribute('spellcheck', 'false');
-    });
-}
-
+// ================================================================
+// INIT
+// ================================================================
 async function init() {
-    installIOSInputStability();
-    installNumericInputHints();
     await initDB();
     await loadSettings();
     refreshToday();
@@ -1646,9 +2420,6 @@ async function init() {
 
 init().catch(console.error);
 
-// IMPORTANT:
-// The old global touchstart focus hack has been intentionally removed.
-// Do not bring it back.
 </script>
 </body>
 </html>
