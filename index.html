@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#0a110d">
     <title>MacroTrack</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -32,7 +31,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding-bottom: var(--nav-height);
-            overflow-x: clip;
+            overflow-x: hidden;
         }
 
         /* NAV */
@@ -348,7 +347,7 @@
         /* MEAL BUILDER */
         .build-overlay-inner {
             width: 100%; display: flex; flex-direction: column;
-            max-height: 90vh; overflow: clip;
+            max-height: 90vh; overflow: hidden;
         }
         .build-header { flex-shrink: 0; margin-bottom: 12px; }
         .build-food-list { flex: 1; overflow-y: auto; margin-bottom: 8px; }
@@ -647,8 +646,8 @@
 </div>
 
 <!-- FOOD DETAIL OVERLAY -->
-<div class="overlay" id="foodDetailOverlay" style="align-items:flex-start; justify-content:flex-start; padding:0; overflow:hidden;">
-    <div style="width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:28px 24px 48px;"  id="foodDetailScrollInner">
+<div class="overlay" id="foodDetailOverlay" style="align-items:flex-start; justify-content:flex-start; padding-top:28px; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+    <div style="width:100%; padding:0 24px 48px;" id="foodDetailScrollInner">
         <div class="overlay-title" style="margin-bottom:4px;">Add Food</div>
         <div class="overlay-sub">Name the food, enter numbers, and let AI fill the rest</div>
 
@@ -887,32 +886,35 @@
 <!-- ============================================================ -->
 <!-- BARCODE SCANNER OVERLAY -->
 <!-- ============================================================ -->
-<div id="barcodeScannerOverlay" style="display:none; position:fixed; inset:0; background:#000; z-index:9999; flex-direction:column; align-items:center; justify-content:flex-start;">
-    <!-- Header -->
-    <div style="width:100%; padding:16px 20px 12px; display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.6); position:relative; z-index:2;">
-        <div>
-            <div style="font-size:17px; font-weight:800; color:#fff;">Scan Barcode</div>
-            <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px;">Point camera at product barcode</div>
-        </div>
-        <button onclick="closeBarcodeScanner()" style="background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:36px; height:36px; color:#fff; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+<div id="barcodeScannerOverlay" style="display:none; position:fixed; inset:0; background:rgba(10,17,13,0.98); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px;">
+    <div style="font-size:22px; font-weight:800; color:var(--text); margin-bottom:6px;">Scan Barcode</div>
+    <div style="font-size:13px; color:var(--text-muted); text-align:center; margin-bottom:32px;">Take a photo of the barcode, or type the number manually</div>
+
+    <!-- Camera capture -->
+    <label style="display:flex; align-items:center; justify-content:center; gap:10px; width:100%; max-width:340px; padding:16px; background:var(--protein); border-radius:14px; cursor:pointer; margin-bottom:16px; font-size:16px; font-weight:700; color:#fff; touch-action:manipulation;">
+        📷 Take Photo
+        <input type="file" id="barcodeFileInput" accept="image/*" capture="environment" style="display:none;">
+    </label>
+
+    <!-- Divider -->
+    <div style="display:flex; align-items:center; gap:10px; width:100%; max-width:340px; margin-bottom:16px;">
+        <div style="flex:1; height:1px; background:var(--border);"></div>
+        <div style="font-size:12px; color:var(--text-muted); white-space:nowrap;">or type barcode</div>
+        <div style="flex:1; height:1px; background:var(--border);"></div>
     </div>
-    <!-- Camera view -->
-    <div style="position:relative; width:100%; flex:1; overflow:hidden;">
-        <div id="barcodeReader" style="width:100%; height:100%;"></div>
-        <!-- Scan frame overlay -->
-        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
-            <div style="width:280px; height:140px; position:relative;">
-                <div style="position:absolute; top:0; left:0; width:32px; height:32px; border-top:3px solid var(--protein); border-left:3px solid var(--protein); border-radius:3px 0 0 0;"></div>
-                <div style="position:absolute; top:0; right:0; width:32px; height:32px; border-top:3px solid var(--protein); border-right:3px solid var(--protein); border-radius:0 3px 0 0;"></div>
-                <div style="position:absolute; bottom:0; left:0; width:32px; height:32px; border-bottom:3px solid var(--protein); border-left:3px solid var(--protein); border-radius:0 0 0 3px;"></div>
-                <div style="position:absolute; bottom:0; right:0; width:32px; height:32px; border-bottom:3px solid var(--protein); border-right:3px solid var(--protein); border-radius:0 0 3px 0;"></div>
-            </div>
-        </div>
+
+    <!-- Manual entry -->
+    <div style="display:flex; gap:8px; width:100%; max-width:340px; margin-bottom:20px;">
+        <input id="barcodeManualInput" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 012345678905"
+            style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 12px; color:var(--text); font-size:16px; outline:none; font-family:inherit;">
+        <button onclick="submitManualBarcode()" type="button"
+            style="padding:14px 18px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; color:var(--protein); font-size:14px; font-weight:700; cursor:pointer; touch-action:manipulation;">Look up</button>
     </div>
-    <!-- Status bar -->
-    <div id="barcodeScanStatus" style="width:100%; padding:16px 20px; background:rgba(0,0,0,0.7); text-align:center; font-size:13px; color:rgba(255,255,255,0.7); min-height:54px;">
-        Scanning…
-    </div>
+
+    <div id="barcodeScanStatus" style="font-size:13px; color:var(--text-muted); text-align:center; min-height:40px; padding:0 12px;"></div>
+
+    <button onclick="closeBarcodeScanner()" type="button"
+        style="margin-top:20px; background:none; border:1px solid var(--border); border-radius:12px; padding:12px 36px; color:var(--text-muted); font-size:14px; font-weight:700; cursor:pointer; touch-action:manipulation;">Cancel</button>
 </div>
 
 <!-- ============================================================ -->
@@ -1625,43 +1627,60 @@ document.getElementById('methodFavorites').addEventListener('click', () => {
 });
 
 // ================================================================
-// BARCODE SCANNER
+// BARCODE SCANNER (native — no third-party library)
 // ================================================================
-let html5QrScanner = null;
-let barcodeLastScanned = null;
 
 function openBarcodeScanner() {
-    barcodeLastScanned = null;
-    const overlay = document.getElementById('barcodeScannerOverlay');
-    overlay.style.display = 'flex';
-    document.getElementById('barcodeScanStatus').textContent = 'Scanning — hold camera steady over barcode';
-
-    html5QrScanner = new Html5Qrcode('barcodeReader');
-    html5QrScanner.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 280, height: 140 }, aspectRatio: 1.5 },
-        (decodedText) => {
-            if (decodedText === barcodeLastScanned) return; // dedupe
-            barcodeLastScanned = decodedText;
-            document.getElementById('barcodeScanStatus').textContent = `✓ Found ${decodedText} — looking up product…`;
-            lookupBarcode(decodedText);
-        },
-        () => {} // ignore per-frame failures silently
-    ).catch(err => {
-        document.getElementById('barcodeScanStatus').textContent = '⚠ Camera access denied — check browser permissions';
-        console.warn('Barcode scanner error:', err);
-    });
+    document.getElementById('barcodeScannerOverlay').style.display = 'flex';
+    document.getElementById('barcodeManualInput').value = '';
+    document.getElementById('barcodeScanStatus').textContent = '';
 }
 
-async function closeBarcodeScanner() {
-    if (html5QrScanner) {
-        try { await html5QrScanner.stop(); } catch (e) {}
-        try { html5QrScanner.clear(); } catch (e) {}
-        html5QrScanner = null;
-    }
+function closeBarcodeScanner() {
     document.getElementById('barcodeScannerOverlay').style.display = 'none';
-    document.getElementById('barcodeReader').innerHTML = '';
+    document.getElementById('barcodeManualInput').value = '';
+    document.getElementById('barcodeScanStatus').textContent = '';
 }
+
+async function submitManualBarcode() {
+    const val = document.getElementById('barcodeManualInput').value.trim();
+    if (!val) return;
+    document.getElementById('barcodeScanStatus').textContent = 'Looking up product…';
+    await lookupBarcode(val);
+}
+
+// Wire up file input for photo-based barcode detection
+document.getElementById('barcodeFileInput').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = ''; // reset so same file can be re-selected
+    document.getElementById('barcodeScanStatus').textContent = 'Reading barcode from photo…';
+
+    if (!('BarcodeDetector' in window)) {
+        document.getElementById('barcodeScanStatus').textContent = '⚠ Auto-detect not supported on this device — type the barcode number below';
+        return;
+    }
+
+    try {
+        const detector = new BarcodeDetector({
+            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code']
+        });
+        const bitmap = await createImageBitmap(file);
+        const codes  = await detector.detect(bitmap);
+
+        if (!codes.length) {
+            document.getElementById('barcodeScanStatus').textContent = '⚠ No barcode detected — try a clearer photo or type it below';
+            return;
+        }
+
+        const barcode = codes[0].rawValue;
+        document.getElementById('barcodeScanStatus').textContent = `✓ Found ${barcode} — looking up product…`;
+        await lookupBarcode(barcode);
+    } catch (err) {
+        document.getElementById('barcodeScanStatus').textContent = '⚠ Could not read barcode — please type it below';
+        console.warn('BarcodeDetector error:', err);
+    }
+});
 
 async function lookupBarcode(barcode) {
     try {
@@ -1669,8 +1688,7 @@ async function lookupBarcode(barcode) {
         const data = await res.json();
 
         if (data.status !== 1 || !data.product) {
-            document.getElementById('barcodeScanStatus').textContent = '⚠ Product not found — try entering manually';
-            barcodeLastScanned = null; // allow retry
+            document.getElementById('barcodeScanStatus').textContent = '⚠ Product not found — try a different barcode or enter manually';
             return;
         }
 
@@ -1718,8 +1736,7 @@ async function lookupBarcode(barcode) {
         showToast(`Found: ${p.product_name || 'product'}`, 'success');
 
     } catch (err) {
-        document.getElementById('barcodeScanStatus').textContent = '⚠ Lookup failed — check your connection';
-        barcodeLastScanned = null;
+        document.getElementById('barcodeScanStatus').textContent = '⚠ Lookup failed — check your connection and try again';
         console.warn('Barcode lookup error:', err);
     }
 }
@@ -2050,7 +2067,7 @@ function openFoodDetail(prefill = null, showSaveFav = true) {
     document.getElementById('saveFavRow').style.display = showSaveFav ? 'flex' : 'none';
     const overlay = document.getElementById('foodDetailOverlay');
     overlay.classList.add('active');
-    document.getElementById('foodDetailScrollInner').scrollTop = 0;
+    overlay.scrollTop = 0;
 
     // Precompute base nutrition so stepper can scale from the start
     // If prefill has both qty and at least one macro value, compute base; otherwise clear
