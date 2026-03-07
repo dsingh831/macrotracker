@@ -555,15 +555,6 @@
         <div class="method-sheet-handle"></div>
         <div class="method-sheet-title">How do you want to log?</div>
 
-        <div class="method-card" id="methodBarcode">
-            <div class="method-icon" style="background:rgba(16,185,129,0.12);">📷</div>
-            <div class="method-text">
-                <div class="method-label">Scan Barcode</div>
-                <div class="method-desc">Point camera at any packaged food — macros auto-filled instantly</div>
-            </div>
-            <svg class="method-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-
         <div class="method-card" id="methodManual">
             <div class="method-icon manual">📊</div>
             <div class="method-text">
@@ -710,7 +701,7 @@
             <div style="flex:1; height:1px; background:var(--border);"></div>
         </div>
 
-        <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:14px;">Scan a barcode to auto-fill, or enter values manually below.</div>
+        <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:14px;">Enter values manually below, or leave blank if unknown.</div>
 
         <!-- MICRO FIELDS — always visible -->
         <div id="microFieldsSection">
@@ -884,39 +875,7 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- BARCODE SCANNER OVERLAY -->
 <!-- ============================================================ -->
-<div id="barcodeScannerOverlay" style="display:none; position:fixed; inset:0; background:rgba(10,17,13,0.98); z-index:9999; flex-direction:column; align-items:center; justify-content:center; padding:32px 24px;">
-    <div style="font-size:22px; font-weight:800; color:var(--text); margin-bottom:6px;">Scan Barcode</div>
-    <div style="font-size:13px; color:var(--text-muted); text-align:center; margin-bottom:32px;">Take a photo of the barcode, or type the number manually</div>
-
-    <!-- Camera capture -->
-    <label style="display:flex; align-items:center; justify-content:center; gap:10px; width:100%; max-width:340px; padding:16px; background:var(--protein); border-radius:14px; cursor:pointer; margin-bottom:16px; font-size:16px; font-weight:700; color:#fff; touch-action:manipulation;">
-        📷 Take Photo
-        <input type="file" id="barcodeFileInput" accept="image/*" capture="environment" style="display:none;">
-    </label>
-
-    <!-- Divider -->
-    <div style="display:flex; align-items:center; gap:10px; width:100%; max-width:340px; margin-bottom:16px;">
-        <div style="flex:1; height:1px; background:var(--border);"></div>
-        <div style="font-size:12px; color:var(--text-muted); white-space:nowrap;">or type barcode</div>
-        <div style="flex:1; height:1px; background:var(--border);"></div>
-    </div>
-
-    <!-- Manual entry -->
-    <div style="display:flex; gap:8px; width:100%; max-width:340px; margin-bottom:20px;">
-        <input id="barcodeManualInput" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 012345678905"
-            style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:14px 12px; color:var(--text); font-size:16px; outline:none; font-family:inherit;">
-        <button onclick="submitManualBarcode()" type="button"
-            style="padding:14px 18px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; color:var(--protein); font-size:14px; font-weight:700; cursor:pointer; touch-action:manipulation;">Look up</button>
-    </div>
-
-    <div id="barcodeScanStatus" style="font-size:13px; color:var(--text-muted); text-align:center; min-height:40px; padding:0 12px;"></div>
-
-    <button onclick="closeBarcodeScanner()" type="button"
-        style="margin-top:20px; background:none; border:1px solid var(--border); border-radius:12px; padding:12px 36px; color:var(--text-muted); font-size:14px; font-weight:700; cursor:pointer; touch-action:manipulation;">Cancel</button>
-</div>
-
 <!-- ============================================================ -->
 <!-- TODAY PAGE -->
 <!-- ============================================================ -->
@@ -1601,11 +1560,6 @@ methodPicker.addEventListener('click', (e) => {
     if (e.target === methodPicker) methodPicker.classList.remove('active');
 });
 
-document.getElementById('methodBarcode').addEventListener('click', () => {
-    methodPicker.classList.remove('active');
-    openBarcodeScanner();
-});
-
 document.getElementById('methodVoice').addEventListener('click', () => {
     methodPicker.classList.remove('active');
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1625,121 +1579,6 @@ document.getElementById('methodFavorites').addEventListener('click', () => {
     methodPicker.classList.remove('active');
     openFoodPicker('quickadd');
 });
-
-// ================================================================
-// BARCODE SCANNER (native — no third-party library)
-// ================================================================
-
-function openBarcodeScanner() {
-    document.getElementById('barcodeScannerOverlay').style.display = 'flex';
-    document.getElementById('barcodeManualInput').value = '';
-    document.getElementById('barcodeScanStatus').textContent = '';
-}
-
-function closeBarcodeScanner() {
-    document.getElementById('barcodeScannerOverlay').style.display = 'none';
-    document.getElementById('barcodeManualInput').value = '';
-    document.getElementById('barcodeScanStatus').textContent = '';
-}
-
-async function submitManualBarcode() {
-    const val = document.getElementById('barcodeManualInput').value.trim();
-    if (!val) return;
-    document.getElementById('barcodeScanStatus').textContent = 'Looking up product…';
-    await lookupBarcode(val);
-}
-
-// Wire up file input for photo-based barcode detection
-document.getElementById('barcodeFileInput').addEventListener('change', async function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    e.target.value = ''; // reset so same file can be re-selected
-    document.getElementById('barcodeScanStatus').textContent = 'Reading barcode from photo…';
-
-    if (!('BarcodeDetector' in window)) {
-        document.getElementById('barcodeScanStatus').textContent = '⚠ Auto-detect not supported on this device — type the barcode number below';
-        return;
-    }
-
-    try {
-        const detector = new BarcodeDetector({
-            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'qr_code']
-        });
-        const bitmap = await createImageBitmap(file);
-        const codes  = await detector.detect(bitmap);
-
-        if (!codes.length) {
-            document.getElementById('barcodeScanStatus').textContent = '⚠ No barcode detected — try a clearer photo or type it below';
-            return;
-        }
-
-        const barcode = codes[0].rawValue;
-        document.getElementById('barcodeScanStatus').textContent = `✓ Found ${barcode} — looking up product…`;
-        await lookupBarcode(barcode);
-    } catch (err) {
-        document.getElementById('barcodeScanStatus').textContent = '⚠ Could not read barcode — please type it below';
-        console.warn('BarcodeDetector error:', err);
-    }
-});
-
-async function lookupBarcode(barcode) {
-    try {
-        const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=product_name,brands,nutriments,serving_size,serving_quantity`);
-        const data = await res.json();
-
-        if (data.status !== 1 || !data.product) {
-            document.getElementById('barcodeScanStatus').textContent = '⚠ Product not found — try a different barcode or enter manually';
-            return;
-        }
-
-        const p = data.product;
-        const n = p.nutriments || {};
-
-        // Prefer per-serving values, fall back to per-100g
-        const hasServing = n['energy-kcal_serving'] != null;
-        const cal     = Math.round(hasServing ? (n['energy-kcal_serving'] || 0) : (n['energy-kcal_100g'] || 0));
-        const protein = Math.round((hasServing ? n['proteins_serving']      : n['proteins_100g'])      || 0);
-        const carbs   = Math.round((hasServing ? n['carbohydrates_serving'] : n['carbohydrates_100g']) || 0);
-        const fat     = Math.round((hasServing ? n['fat_serving']           : n['fat_100g'])           || 0);
-
-        // Micros — Open Food Facts uses mg/mcg per 100g/serving
-        const micro = (key, fallback) => parseFloat((hasServing ? n[key + '_serving'] : n[key + '_100g']) || fallback || 0);
-        const micros = {
-            fiber:     micro('fiber',       0),
-            satFat:    micro('saturated-fat', 0),
-            sugar:     micro('sugars',      0),
-            sodium:    micro('sodium',      0) * (hasServing ? 1000 : 10), // convert g→mg
-            vitA:      micro('vitamin-a',   0),
-            vitC:      micro('vitamin-c',   0),
-            vitD:      micro('vitamin-d',   0),
-            vitB12:    micro('vitamin-b12', 0),
-            calcium:   micro('calcium',     0),
-            iron:      micro('iron',        0),
-            potassium: micro('potassium',   0),
-            zinc:      micro('zinc',        0),
-        };
-
-        const productName = [p.brands, p.product_name].filter(Boolean).join(' – ') || 'Scanned Product';
-        const servingLabel = p.serving_size || (hasServing ? '1 serving' : '100g');
-        const qty = p.serving_quantity ? parseFloat(p.serving_quantity) : (hasServing ? 1 : 100);
-        const unit = hasServing ? 'servings' : 'g';
-
-        await closeBarcodeScanner();
-
-        openFoodDetail({
-            name: productName,
-            qty, unit,
-            protein, carbs, fat, calories: cal,
-            micros
-        });
-
-        showToast(`Found: ${p.product_name || 'product'}`, 'success');
-
-    } catch (err) {
-        document.getElementById('barcodeScanStatus').textContent = '⚠ Lookup failed — check your connection and try again';
-        console.warn('Barcode lookup error:', err);
-    }
-}
 
 // ================================================================
 // MEAL BUILDER
