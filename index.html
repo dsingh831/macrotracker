@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a110d">
     <title>MacroTrack</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -39,7 +40,9 @@
             position: fixed;
             bottom: 0; left: 0; right: 0;
             height: var(--nav-height);
-            background: rgba(17,26,20,0.99);
+            background: rgba(17,26,20,0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid var(--border);
             display: flex;
             z-index: 100;
@@ -115,7 +118,9 @@
         /* METHOD PICKER */
         .method-picker-overlay {
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.82);
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 200;
             display: none;
             align-items: flex-end;
@@ -158,15 +163,15 @@
         /* OVERLAY */
         .overlay {
             position: fixed; inset: 0;
-            background: rgba(10,17,13,0.97);
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 200;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 24px;
-            /* No backdrop-filter — causes iOS Safari input focus bug on position:fixed overlays */
-            -webkit-overflow-scrolling: touch;
         }
         .overlay.active { display: flex; }
         .overlay-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; text-align: center; }
@@ -385,15 +390,6 @@
         .meal-name-input:focus { border-color: var(--protein); }
         .meal-name-input::placeholder { color: var(--text-muted); }
 
-        /* iOS STANDALONE INPUT FIX — force GPU compositing on all inputs/selects.
-           In standalone PWA mode, position:fixed ancestors can prevent inputs from
-           receiving focus. translateZ(0) creates a separate compositing layer which
-           allows iOS to correctly handle focus and keyboard for these elements. */
-        input, textarea, select {
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-        }
-
         /* FOOD PICKER */
         .food-picker-list { max-height: 42vh; overflow-y: auto; margin-bottom: 10px; }
         .fav-pick-card {
@@ -564,6 +560,15 @@
         <div class="method-sheet-handle"></div>
         <div class="method-sheet-title">How do you want to log?</div>
 
+        <div class="method-card" id="methodBarcode">
+            <div class="method-icon" style="background:rgba(16,185,129,0.12);">📷</div>
+            <div class="method-text">
+                <div class="method-label">Scan Barcode</div>
+                <div class="method-desc">Point camera at any packaged food — macros auto-filled instantly</div>
+            </div>
+            <svg class="method-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+
         <div class="method-card" id="methodManual">
             <div class="method-icon manual">📊</div>
             <div class="method-text">
@@ -596,8 +601,7 @@
 </div>
 
 <!-- MEAL BUILDER OVERLAY -->
-<div class="overlay" id="buildMealOverlay" style="padding:0; overflow:hidden;">
-    <div style="position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:32px 24px 24px; box-sizing:border-box; display:flex; align-items:flex-start;">
+<div class="overlay" id="buildMealOverlay" style="align-items:flex-start; padding-top:32px;">
     <div class="build-overlay-inner">
         <div class="build-header">
             <div class="overlay-title" id="buildOverlayTitle" style="margin-bottom:4px; text-align:left;">Build a Meal</div>
@@ -627,7 +631,6 @@
             </div>
         </div>
     </div>
-    </div>
 </div>
 
 <!-- FOOD PICKER OVERLAY -->
@@ -648,8 +651,8 @@
 </div>
 
 <!-- FOOD DETAIL OVERLAY -->
-<div class="overlay" id="foodDetailOverlay" style="padding:0; overflow:hidden;">
-    <div id="foodDetailScrollInner" style="position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:28px 24px 48px; box-sizing:border-box;">
+<div class="overlay" id="foodDetailOverlay" style="align-items:flex-start; justify-content:flex-start; padding-top:28px; overflow-y:auto;">
+    <div style="width:100%; padding-bottom:28px;">
         <div class="overlay-title" style="margin-bottom:4px;">Add Food</div>
         <div class="overlay-sub">Name the food, enter numbers, and let AI fill the rest</div>
 
@@ -712,7 +715,7 @@
             <div style="flex:1; height:1px; background:var(--border);"></div>
         </div>
 
-        <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:14px;">Enter values manually below, or leave blank if unknown.</div>
+        <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:14px;">Scan a barcode to auto-fill, or enter values manually below.</div>
 
         <!-- MICRO FIELDS — always visible -->
         <div id="microFieldsSection">
@@ -824,8 +827,8 @@
 </div>
 
 <!-- EDIT MEAL OVERLAY -->
-<div class="overlay" id="editMealOverlay" style="padding:0; overflow:hidden;">
-    <div style="position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:28px 24px 48px; box-sizing:border-box;">
+<div class="overlay" id="editMealOverlay">
+    <div style="width:100%;">
         <div class="overlay-title" style="margin-bottom:4px;">Edit Meal</div>
         <div class="overlay-sub">Update the name or any macro values</div>
         <input class="edit-meal-name-input" id="editMealName" type="text" placeholder="Meal name">
@@ -886,7 +889,36 @@
 </div>
 
 <!-- ============================================================ -->
+<!-- BARCODE SCANNER OVERLAY -->
 <!-- ============================================================ -->
+<div id="barcodeScannerOverlay" style="display:none; position:fixed; inset:0; background:#000; z-index:9999; flex-direction:column; align-items:center; justify-content:flex-start;">
+    <!-- Header -->
+    <div style="width:100%; padding:16px 20px 12px; display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,0.6); position:relative; z-index:2;">
+        <div>
+            <div style="font-size:17px; font-weight:800; color:#fff;">Scan Barcode</div>
+            <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:2px;">Point camera at product barcode</div>
+        </div>
+        <button onclick="closeBarcodeScanner()" style="background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:36px; height:36px; color:#fff; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+    </div>
+    <!-- Camera view -->
+    <div style="position:relative; width:100%; flex:1; overflow:hidden;">
+        <div id="barcodeReader" style="width:100%; height:100%;"></div>
+        <!-- Scan frame overlay -->
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+            <div style="width:280px; height:140px; position:relative;">
+                <div style="position:absolute; top:0; left:0; width:32px; height:32px; border-top:3px solid var(--protein); border-left:3px solid var(--protein); border-radius:3px 0 0 0;"></div>
+                <div style="position:absolute; top:0; right:0; width:32px; height:32px; border-top:3px solid var(--protein); border-right:3px solid var(--protein); border-radius:0 3px 0 0;"></div>
+                <div style="position:absolute; bottom:0; left:0; width:32px; height:32px; border-bottom:3px solid var(--protein); border-left:3px solid var(--protein); border-radius:0 0 0 3px;"></div>
+                <div style="position:absolute; bottom:0; right:0; width:32px; height:32px; border-bottom:3px solid var(--protein); border-right:3px solid var(--protein); border-radius:0 0 3px 0;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Status bar -->
+    <div id="barcodeScanStatus" style="width:100%; padding:16px 20px; background:rgba(0,0,0,0.7); text-align:center; font-size:13px; color:rgba(255,255,255,0.7); min-height:54px;">
+        Scanning…
+    </div>
+</div>
+
 <!-- ============================================================ -->
 <!-- TODAY PAGE -->
 <!-- ============================================================ -->
@@ -1571,6 +1603,11 @@ methodPicker.addEventListener('click', (e) => {
     if (e.target === methodPicker) methodPicker.classList.remove('active');
 });
 
+document.getElementById('methodBarcode').addEventListener('click', () => {
+    methodPicker.classList.remove('active');
+    openBarcodeScanner();
+});
+
 document.getElementById('methodVoice').addEventListener('click', () => {
     methodPicker.classList.remove('active');
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1590,6 +1627,106 @@ document.getElementById('methodFavorites').addEventListener('click', () => {
     methodPicker.classList.remove('active');
     openFoodPicker('quickadd');
 });
+
+// ================================================================
+// BARCODE SCANNER
+// ================================================================
+let html5QrScanner = null;
+let barcodeLastScanned = null;
+
+function openBarcodeScanner() {
+    barcodeLastScanned = null;
+    const overlay = document.getElementById('barcodeScannerOverlay');
+    overlay.style.display = 'flex';
+    document.getElementById('barcodeScanStatus').textContent = 'Scanning — hold camera steady over barcode';
+
+    html5QrScanner = new Html5Qrcode('barcodeReader');
+    html5QrScanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 280, height: 140 }, aspectRatio: 1.5 },
+        (decodedText) => {
+            if (decodedText === barcodeLastScanned) return; // dedupe
+            barcodeLastScanned = decodedText;
+            document.getElementById('barcodeScanStatus').textContent = `✓ Found ${decodedText} — looking up product…`;
+            lookupBarcode(decodedText);
+        },
+        () => {} // ignore per-frame failures silently
+    ).catch(err => {
+        document.getElementById('barcodeScanStatus').textContent = '⚠ Camera access denied — check browser permissions';
+        console.warn('Barcode scanner error:', err);
+    });
+}
+
+async function closeBarcodeScanner() {
+    if (html5QrScanner) {
+        try { await html5QrScanner.stop(); } catch (e) {}
+        try { html5QrScanner.clear(); } catch (e) {}
+        html5QrScanner = null;
+    }
+    document.getElementById('barcodeScannerOverlay').style.display = 'none';
+    document.getElementById('barcodeReader').innerHTML = '';
+}
+
+async function lookupBarcode(barcode) {
+    try {
+        const res = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=product_name,brands,nutriments,serving_size,serving_quantity`);
+        const data = await res.json();
+
+        if (data.status !== 1 || !data.product) {
+            document.getElementById('barcodeScanStatus').textContent = '⚠ Product not found — try entering manually';
+            barcodeLastScanned = null; // allow retry
+            return;
+        }
+
+        const p = data.product;
+        const n = p.nutriments || {};
+
+        // Prefer per-serving values, fall back to per-100g
+        const hasServing = n['energy-kcal_serving'] != null;
+        const cal     = Math.round(hasServing ? (n['energy-kcal_serving'] || 0) : (n['energy-kcal_100g'] || 0));
+        const protein = Math.round((hasServing ? n['proteins_serving']      : n['proteins_100g'])      || 0);
+        const carbs   = Math.round((hasServing ? n['carbohydrates_serving'] : n['carbohydrates_100g']) || 0);
+        const fat     = Math.round((hasServing ? n['fat_serving']           : n['fat_100g'])           || 0);
+
+        // Micros — Open Food Facts uses mg/mcg per 100g/serving
+        const micro = (key, fallback) => parseFloat((hasServing ? n[key + '_serving'] : n[key + '_100g']) || fallback || 0);
+        const micros = {
+            fiber:     micro('fiber',       0),
+            satFat:    micro('saturated-fat', 0),
+            sugar:     micro('sugars',      0),
+            sodium:    micro('sodium',      0) * (hasServing ? 1000 : 10), // convert g→mg
+            vitA:      micro('vitamin-a',   0),
+            vitC:      micro('vitamin-c',   0),
+            vitD:      micro('vitamin-d',   0),
+            vitB12:    micro('vitamin-b12', 0),
+            calcium:   micro('calcium',     0),
+            iron:      micro('iron',        0),
+            potassium: micro('potassium',   0),
+            zinc:      micro('zinc',        0),
+        };
+
+        const productName = [p.brands, p.product_name].filter(Boolean).join(' – ') || 'Scanned Product';
+        const servingLabel = p.serving_size || (hasServing ? '1 serving' : '100g');
+        const qty = p.serving_quantity ? parseFloat(p.serving_quantity) : (hasServing ? 1 : 100);
+        const unit = hasServing ? 'servings' : 'g';
+
+        await closeBarcodeScanner();
+
+        openFoodDetail({
+            name: productName,
+            qty, unit,
+            protein, carbs, fat, calories: cal,
+            micros
+        });
+
+        showToast(`Found: ${p.product_name || 'product'}`, 'success');
+
+    } catch (err) {
+        document.getElementById('barcodeScanStatus').textContent = '⚠ Lookup failed — check your connection';
+        barcodeLastScanned = null;
+        console.warn('Barcode lookup error:', err);
+    }
+}
 
 // ================================================================
 // MEAL BUILDER
@@ -1917,7 +2054,7 @@ function openFoodDetail(prefill = null, showSaveFav = true) {
     document.getElementById('saveFavRow').style.display = showSaveFav ? 'flex' : 'none';
     const overlay = document.getElementById('foodDetailOverlay');
     overlay.classList.add('active');
-    document.getElementById('foodDetailScrollInner').scrollTop = 0;
+    overlay.scrollTop = 0;
 
     // Precompute base nutrition so stepper can scale from the start
     // If prefill has both qty and at least one macro value, compute base; otherwise clear
@@ -2430,7 +2567,6 @@ async function init() {
 }
 
 init().catch(console.error);
-
 </script>
 </body>
 </html>
