@@ -1914,19 +1914,8 @@ async function quickAddFav(id) {
     if (!fav) return;
     document.getElementById('foodPickerOverlay').classList.remove('active');
     methodPicker.classList.remove('active');
-    await saveMealDB({
-        id: Date.now(),
-        date: todayStr(),
-        name: fav.name,
-        protein: fav.protein || 0,
-        carbs: fav.carbs || 0,
-        fat: fav.fat || 0,
-        calories: fav.calories || 0,
-        micros: fav.micros || {},
-        ts: new Date().toISOString()
-    });
-    showToast(`${fav.name} logged ✓`, 'success');
-    refreshToday();
+    // Open pre-filled so user can adjust quantity/servings before confirming
+    openFoodDetail(fav, false);
 }
 
 document.getElementById('pickNewFoodBtn').addEventListener('click', () => {
