@@ -236,16 +236,17 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* MEAL LIST */
-        .meal-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; }
+        .meal-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 8px; }
         .meal-item:last-child { border-bottom: none; }
         .meal-info { flex: 1; }
         .meal-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
         .meal-macros { font-size: 12px; color: var(--text-muted); }
-        .meal-protein-col { text-align: right; }
-        .meal-protein-val { font-size: 16px; font-weight: 800; color: var(--protein); }
-        .meal-protein-lbl { font-size: 10px; color: var(--text-muted); }
-        .meal-del { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.2s; }
+        .meal-del { background: none; border: none; color: var(--border); cursor: pointer; padding: 4px; transition: color 0.2s; flex-shrink: 0; }
         .meal-del:hover { color: #ef4444; }
+        .meal-stepper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        .step-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 18px; font-weight: 300; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; touch-action: manipulation; flex-shrink: 0; }
+        .step-btn-plus { background: var(--protein); border-color: var(--protein); color: #0a110d; font-weight: 700; }
+        .step-val { font-size: 12px; font-weight: 700; color: var(--text-muted); min-width: 22px; text-align: center; }
 
         /* BODY LOG */
         .body-log-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
@@ -1495,16 +1496,15 @@ async function refreshToday() {
     const zeroMicros = () => Object.fromEntries(MICRO_KEYS.map(k => [k, 0]));
     const mealMicros = zeroMicros();
     meals.forEach(m => {
-        // Top-level micros (voice/describe path)
-        if (m.micros) {
-            MICRO_KEYS.forEach(k => { mealMicros[k] += (m.micros[k] || 0); });
-        }
-        // Item-level micros (meal builder path)
-        if (m.items) {
-            m.items.forEach(item => {
-                if (item.micros) {
-                    MICRO_KEYS.forEach(k => { mealMicros[k] += (item.micros[k] || 0); });
-                }
+        if (m.baseMicros) {
+            // Meal has been stepped — m.micros holds the correctly scaled total
+            MICRO_KEYS.forEach(k => { mealMicros[k] += (m.micros || {})[k] || 0; });
+        } else {
+            // Not yet stepped — sum from top-level micros (voice/manual) + item micros (builder)
+            // Both paths are additive so meal builder meals (no top-level micros) work too
+            MICRO_KEYS.forEach(k => { mealMicros[k] += (m.micros || {})[k] || 0; });
+            (m.items || []).forEach(item => {
+                MICRO_KEYS.forEach(k => { mealMicros[k] += (item.micros || {})[k] || 0; });
             });
         }
     });
@@ -1546,19 +1546,21 @@ async function refreshToday() {
     } else {
         list.innerHTML = meals.map(m => `
             <div class="meal-item">
-                <div class="meal-item-body" onclick="openEditMeal(${m.id})">
+                <div class="meal-item-body" onclick="openEditMeal(${m.id})" style="flex:1; cursor:pointer; padding:4px 0; border-radius:8px; transition:background 0.15s;">
                     <div class="meal-info">
                         <div class="meal-name">${m.name}${m.items && m.items.length ? `<span style="font-size:10px;color:var(--text-muted);font-weight:500;margin-left:6px;">${m.items.length} items</span>` : ''}</div>
                         <div class="meal-macros">
+                            <span class="text-protein">P: ${Math.round(m.protein)}g</span>&nbsp;&nbsp;
                             <span class="text-carbs">C: ${Math.round(m.carbs)}g</span>&nbsp;&nbsp;
                             <span class="text-fat">F: ${Math.round(m.fat)}g</span>&nbsp;&nbsp;
                             <span class="text-calories">${Math.round(m.calories)} kcal</span>
                         </div>
                     </div>
-                    <div class="meal-protein-col">
-                        <div class="meal-protein-val">${Math.round(m.protein)}g</div>
-                        <div class="meal-protein-lbl">protein</div>
-                    </div>
+                </div>
+                <div class="meal-stepper">
+                    <button class="step-btn" onclick="stepMeal(${m.id}, -1)">−</button>
+                    <span class="step-val">${m.servings || 1}×</span>
+                    <button class="step-btn step-btn-plus" onclick="stepMeal(${m.id}, 1)">+</button>
                 </div>
                 <button class="meal-del" onclick="deleteMeal(${m.id})" title="Delete">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -1581,6 +1583,46 @@ async function deleteMeal(id) {
     await delMealDB(id);
     refreshToday();
     showToast('Meal deleted');
+}
+
+async function stepMeal(id, delta) {
+    const meals = await getAllMeals();
+    const meal = meals.find(m => m.id === id);
+    if (!meal) return;
+
+    // First time stepping: capture current macros + micros as the 1× base
+    if (meal.baseProtein == null) {
+        meal.baseProtein  = meal.protein;
+        meal.baseCarbs    = meal.carbs;
+        meal.baseFat      = meal.fat;
+        meal.baseCalories = meal.calories;
+        meal.baseMicros   = {};
+        // Start with top-level micros (manual entry path)
+        MICRO_KEYS.forEach(k => { meal.baseMicros[k] = (meal.micros || {})[k] || 0; });
+        // Also accumulate item-level micros (meal builder path)
+        if (meal.items) {
+            meal.items.forEach(item => {
+                MICRO_KEYS.forEach(k => { meal.baseMicros[k] += (item.micros || {})[k] || 0; });
+            });
+        }
+        meal.servings = 1;
+    }
+
+    const newServings = Math.max(1, (meal.servings || 1) + delta);
+    meal.servings     = newServings;
+    meal.protein      = Math.round(meal.baseProtein  * newServings);
+    meal.carbs        = Math.round(meal.baseCarbs    * newServings);
+    meal.fat          = Math.round(meal.baseFat      * newServings);
+    meal.calories     = Math.round(meal.baseCalories * newServings);
+
+    // Scale every vitamin & mineral proportionally
+    meal.micros = meal.micros || {};
+    MICRO_KEYS.forEach(k => {
+        meal.micros[k] = Math.round((meal.baseMicros[k] || 0) * newServings * 10) / 10;
+    });
+
+    await saveMealDB(meal);
+    refreshToday();
 }
 
 // ================================================================
