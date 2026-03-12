@@ -897,6 +897,154 @@
             to { transform: translateY(100%); }
         }
 
+        /* MANUAL ENTRY FORM */
+        .form-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 16px 0 8px;
+        }
+
+        .macro-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .macro-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .micro-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .field-group { display: flex; flex-direction: column; }
+
+        .field-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .field-input {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: var(--protein);
+        }
+
+        .field-input::placeholder { color: var(--text-muted); font-weight: 400; }
+
+        .micro-toggle-btn {
+            width: 100%;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            text-align: left;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 12px 0 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .micro-fields { display: none; }
+        .micro-fields.open { display: block; }
+
+        /* SAVE AS FAVORITE TOGGLE */
+        .save-fav-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 16px 0 12px;
+        }
+
+        .save-fav-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* DUAL ACTION BUTTONS */
+        .dual-btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        /* FAV PICKER ITEMS */
+        .fav-item {
+            background: var(--surface2);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .fav-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .fav-item-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .fav-item-macros {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .fav-item-cals {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--calories);
+        }
+
+        .fav-item-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-log { background: var(--protein); color: #fff; border: none; border-radius: 8px; padding: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .btn-add-meal { background: var(--surface); border: 1.5px solid var(--border); color: var(--text); border-radius: 8px; padding: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .btn-log:active, .btn-add-meal:active { opacity: 0.7; }
+
         /* MICRO CARDS */
         .micro-section-title { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
         .micro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1079,21 +1227,25 @@
     <div id="methodPickerOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header">
-                <span>Add Food</span>
+                <span>Log Food</span>
                 <button class="overlay-close" onclick="closeOverlays()">✕</button>
             </div>
-            <div class="method-grid">
-                <div class="method-card" id="methodBarcode" onclick="openBarcodeScanner()">
-                    <div class="method-icon">📷</div>
-                    <div class="method-label">Scan Barcode</div>
+            <div class="method-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="method-card" onclick="openManualEntry('log')">
+                    <div class="method-icon">✏️</div>
+                    <div class="method-label">Log Food</div>
                 </div>
-                <div class="method-card" id="methodManual" onclick="openMealBuilder()">
+                <div class="method-card" onclick="openMealBuilder()">
                     <div class="method-icon">🍽️</div>
                     <div class="method-label">Build a Meal</div>
                 </div>
-                <div class="method-card" id="methodFavs" onclick="openFavoritePicker()">
+                <div class="method-card" onclick="openFavoritePicker()">
                     <div class="method-icon">⭐</div>
-                    <div class="method-label">Favorite Foods</div>
+                    <div class="method-label">Favorites</div>
+                </div>
+                <div class="method-card" onclick="openBarcodeScanner()">
+                    <div class="method-icon">📷</div>
+                    <div class="method-label">Scan Barcode</div>
                 </div>
             </div>
         </div>
@@ -1110,35 +1262,98 @@
         </div>
     </div>
 
-    <!-- FOOD PICKER OVERLAY -->
-    <div id="foodPickerOverlay" class="overlay">
+    <!-- MANUAL ENTRY OVERLAY -->
+    <div id="manualEntryOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header">
-                <span id="foodPickerTitle">Search Foods</span>
+                <span id="manualEntryTitle">Log Food</span>
                 <button class="overlay-close" onclick="closeOverlays()">✕</button>
             </div>
-            <input type="text" id="foodSearchInput" class="food-search-input" placeholder="Search foods...">
-            <div class="food-list" id="foodList"></div>
+
+            <!-- Name -->
+            <div class="field-group" style="margin-bottom:12px;">
+                <label class="field-label">Food / Ingredient Name</label>
+                <input type="text" id="meFieldName" class="field-input" placeholder="e.g. Chicken Breast">
+            </div>
+
+            <!-- Macros row 1: Calories + Protein -->
+            <div class="form-section-title">Macros</div>
+            <div class="macro-row">
+                <div class="field-group">
+                    <label class="field-label">Calories</label>
+                    <input type="number" id="meFieldCals" class="field-input" placeholder="0" step="1" min="0">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Protein (g)</label>
+                    <input type="number" id="meFieldProtein" class="field-input" placeholder="0" step="0.1" min="0">
+                </div>
+            </div>
+            <!-- Macros row 2: Carbs + Fat -->
+            <div class="macro-row">
+                <div class="field-group">
+                    <label class="field-label">Carbs (g)</label>
+                    <input type="number" id="meFieldCarbs" class="field-input" placeholder="0" step="0.1" min="0">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Fat (g)</label>
+                    <input type="number" id="meFieldFat" class="field-input" placeholder="0" step="0.1" min="0">
+                </div>
+            </div>
+
+            <!-- Vitamins & Minerals toggle -->
+            <button class="micro-toggle-btn" onclick="toggleMicroFields(this)">
+                <span>+ Vitamins &amp; Minerals</span>
+                <span style="font-size:12px;color:var(--text-muted);">Optional</span>
+            </button>
+            <div class="micro-fields" id="microFieldsSection">
+                <div class="micro-row">
+                    <div class="field-group"><label class="field-label">Fiber (g)</label><input type="number" id="meFieldFiber" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                    <div class="field-group"><label class="field-label">Sugar (g)</label><input type="number" id="meFieldSugar" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                </div>
+                <div class="micro-row">
+                    <div class="field-group"><label class="field-label">Sodium (mg)</label><input type="number" id="meFieldSodium" class="field-input" placeholder="0" step="1" min="0"></div>
+                    <div class="field-group"><label class="field-label">Potassium (mg)</label><input type="number" id="meFieldPotassium" class="field-input" placeholder="0" step="1" min="0"></div>
+                </div>
+                <div class="micro-row">
+                    <div class="field-group"><label class="field-label">Calcium (mg)</label><input type="number" id="meFieldCalcium" class="field-input" placeholder="0" step="1" min="0"></div>
+                    <div class="field-group"><label class="field-label">Iron (mg)</label><input type="number" id="meFieldIron" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                </div>
+                <div class="micro-row">
+                    <div class="field-group"><label class="field-label">Vitamin A (mcg)</label><input type="number" id="meFieldVitA" class="field-input" placeholder="0" step="1" min="0"></div>
+                    <div class="field-group"><label class="field-label">Vitamin C (mg)</label><input type="number" id="meFieldVitC" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                </div>
+                <div class="micro-row">
+                    <div class="field-group"><label class="field-label">Vitamin D (mcg)</label><input type="number" id="meFieldVitD" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                    <div class="field-group"><label class="field-label">Vitamin B12 (mcg)</label><input type="number" id="meFieldVitB12" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                </div>
+                <div class="micro-row">
+                    <div class="field-group"><label class="field-label">Magnesium (mg)</label><input type="number" id="meFieldMagnesium" class="field-input" placeholder="0" step="1" min="0"></div>
+                    <div class="field-group"><label class="field-label">Zinc (mg)</label><input type="number" id="meFieldZinc" class="field-input" placeholder="0" step="0.1" min="0"></div>
+                </div>
+            </div>
+
+            <!-- Save as Favorite toggle -->
+            <div class="save-fav-row">
+                <span class="save-fav-label">⭐ Save as Favorite</span>
+                <div class="toggle-pill" id="saveAsFavToggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="dual-btn-row" id="manualEntryBtns">
+                <button class="btn btn-secondary" onclick="confirmManualEntry('meal')">Add to Meal</button>
+                <button class="btn btn-primary" onclick="confirmManualEntry('log')">Log Now</button>
+            </div>
         </div>
     </div>
 
-    <!-- FOOD DETAIL OVERLAY -->
-    <div id="foodDetailOverlay" class="overlay">
+    <!-- FAVORITES PICKER OVERLAY -->
+    <div id="favPickerOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header">
-                <span>Food Details</span>
+                <span>Favorites</span>
                 <button class="overlay-close" onclick="closeOverlays()">✕</button>
             </div>
-            <div class="food-detail-header">
-                <div class="food-detail-name" id="foodDetailName"></div>
-                <div class="food-detail-cals" id="foodDetailCals"></div>
-            </div>
-            <div class="input-group">
-                <label class="input-label">Quantity</label>
-                <input type="number" id="foodQuantity" class="input-field" value="100" placeholder="100">
-            </div>
-            <div class="macro-inputs" id="foodDetailMacros"></div>
-            <button class="add-btn" id="confirmFoodDetail" onclick="confirmFoodDetail()">Add to Meal</button>
+            <div id="favPickerList"></div>
         </div>
     </div>
 
@@ -1168,7 +1383,7 @@
                 </div>
             </div>
             <div class="meal-foods-list" id="mealFoodsList"></div>
-            <button class="btn btn-secondary" style="width:100%;margin-bottom:12px;" onclick="openFoodSearchForMeal()">Add Food</button>
+            <button class="btn btn-secondary" style="width:100%;margin-bottom:12px;" onclick="openManualEntry('meal')">+ Add Item</button>
             <input type="text" id="mealNameInput" class="meal-name-input" placeholder="Meal name (optional)">
             <button class="save-meal-btn" onclick="saveBuildMeal()">Save Meal</button>
         </div>
@@ -1200,7 +1415,7 @@
                 </div>
             </div>
             <div class="meal-foods-list" id="stepMealFoodsList"></div>
-            <button class="btn btn-secondary" style="width:100%;margin-bottom:12px;" onclick="openFoodSearchForStepMeal()">Add Food</button>
+            <button class="btn btn-secondary" style="width:100%;margin-bottom:12px;" onclick="openManualEntry('step')">+ Add Item</button>
             <button class="btn btn-secondary" style="width:100%;margin-bottom:12px;" onclick="deleteStepMeal()">Delete Meal</button>
             <button class="save-meal-btn" onclick="saveStepMeal()">Save Changes</button>
         </div>
@@ -1240,34 +1455,36 @@
     <script>
         // ==================== DB ====================
         // ==================== MICROS ====================
-        const MICRO_KEYS = ['fiber','sugar','sodium','potassium','calcium','iron','vitaminA','vitaminC','vitaminD','magnesium','zinc'];
+        const MICRO_KEYS = ['fiber','sugar','sodium','potassium','calcium','iron','vitaminA','vitaminC','vitaminD','vitaminB12','magnesium','zinc'];
         const RDI = {
-            fiber:     {label:'Fiber',      unit:'g',   rdi:28,   color:'#10B981'},
-            sugar:     {label:'Sugar',      unit:'g',   rdi:50,   color:'#EF4444'},
-            sodium:    {label:'Sodium',     unit:'mg',  rdi:2300, color:'#F59E0B'},
-            potassium: {label:'Potassium',  unit:'mg',  rdi:4700, color:'#6366F1'},
-            calcium:   {label:'Calcium',    unit:'mg',  rdi:1000, color:'#0EA5E9'},
-            iron:      {label:'Iron',       unit:'mg',  rdi:18,   color:'#8B5CF6'},
-            vitaminA:  {label:'Vitamin A',  unit:'mcg', rdi:900,  color:'#F97316'},
-            vitaminC:  {label:'Vitamin C',  unit:'mg',  rdi:90,   color:'#FBBF24'},
-            vitaminD:  {label:'Vitamin D',  unit:'mcg', rdi:20,   color:'#06B6D4'},
-            magnesium: {label:'Magnesium',  unit:'mg',  rdi:420,  color:'#84CC16'},
-            zinc:      {label:'Zinc',       unit:'mg',  rdi:11,   color:'#EC4899'},
+            fiber:      {label:'Fiber',       unit:'g',   rdi:28,   color:'#10B981'},
+            sugar:      {label:'Sugar',       unit:'g',   rdi:50,   color:'#EF4444'},
+            sodium:     {label:'Sodium',      unit:'mg',  rdi:2300, color:'#F59E0B'},
+            potassium:  {label:'Potassium',   unit:'mg',  rdi:4700, color:'#6366F1'},
+            calcium:    {label:'Calcium',     unit:'mg',  rdi:1000, color:'#0EA5E9'},
+            iron:       {label:'Iron',        unit:'mg',  rdi:18,   color:'#8B5CF6'},
+            vitaminA:   {label:'Vitamin A',   unit:'mcg', rdi:900,  color:'#F97316'},
+            vitaminC:   {label:'Vitamin C',   unit:'mg',  rdi:90,   color:'#FBBF24'},
+            vitaminD:   {label:'Vitamin D',   unit:'mcg', rdi:20,   color:'#06B6D4'},
+            vitaminB12: {label:'Vitamin B12', unit:'mcg', rdi:2.4,  color:'#10B981'},
+            magnesium:  {label:'Magnesium',   unit:'mg',  rdi:420,  color:'#84CC16'},
+            zinc:       {label:'Zinc',        unit:'mg',  rdi:11,   color:'#EC4899'},
         };
 
         function extractMicros(nutriments) {
             return {
-                fiber:     nutriments?.fiber_100g || 0,
-                sugar:     nutriments?.sugars_100g || 0,
-                sodium:    (nutriments?.sodium_100g || 0) * 1000,
-                potassium: (nutriments?.potassium_100g || 0) * 1000,
-                calcium:   (nutriments?.calcium_100g || 0) * 1000,
-                iron:      (nutriments?.iron_100g || 0) * 1000,
-                vitaminA:  (nutriments?.['vitamin-a_100g'] || 0) * 1000000,
-                vitaminC:  (nutriments?.['vitamin-c_100g'] || 0) * 1000,
-                vitaminD:  (nutriments?.['vitamin-d_100g'] || 0) * 1000000,
-                magnesium: (nutriments?.magnesium_100g || 0) * 1000,
-                zinc:      (nutriments?.zinc_100g || 0) * 1000,
+                fiber:      nutriments?.fiber_100g || 0,
+                sugar:      nutriments?.sugars_100g || 0,
+                sodium:     (nutriments?.sodium_100g || 0) * 1000,
+                potassium:  (nutriments?.potassium_100g || 0) * 1000,
+                calcium:    (nutriments?.calcium_100g || 0) * 1000,
+                iron:       (nutriments?.iron_100g || 0) * 1000,
+                vitaminA:   (nutriments?.['vitamin-a_100g'] || 0) * 1000000,
+                vitaminC:   (nutriments?.['vitamin-c_100g'] || 0) * 1000,
+                vitaminD:   (nutriments?.['vitamin-d_100g'] || 0) * 1000000,
+                vitaminB12: (nutriments?.['vitamin-b12_100g'] || 0) * 1000000,
+                magnesium:  (nutriments?.magnesium_100g || 0) * 1000,
+                zinc:       (nutriments?.zinc_100g || 0) * 1000,
             };
         }
 
@@ -1698,12 +1915,9 @@
         }
 
         function closeOverlays() {
-            document.getElementById('methodPickerOverlay').classList.remove('active');
-            document.getElementById('barcodeOverlay').classList.remove('active');
-            document.getElementById('foodPickerOverlay').classList.remove('active');
-            document.getElementById('foodDetailOverlay').classList.remove('active');
-            document.getElementById('mealBuilderOverlay').classList.remove('active');
-            document.getElementById('stepMealOverlay').classList.remove('active');
+            ['methodPickerOverlay','barcodeOverlay','manualEntryOverlay',
+             'favPickerOverlay','mealBuilderOverlay','stepMealOverlay']
+                .forEach(id => document.getElementById(id)?.classList.remove('active'));
         }
 
         // ==================== BARCODE ====================
@@ -1761,8 +1975,7 @@
                         calories: p.nutriments?.['energy-kcal_100g'] || ((p.nutriments?.proteins_100g || 0) * 4 + (p.nutriments?.carbohydrates_100g || 0) * 4 + (p.nutriments?.fat_100g || 0) * 9),
                         micros: extractMicros(p.nutriments),
                     };
-                    foodPickerMode = 'meal';
-                    openFoodDetail(item);
+                    openManualEntry('log', item);
                 } else {
                     showToast('Product not found', 'error');
                     openMethodPicker();
@@ -1773,160 +1986,195 @@
             }
         }
 
-        // ==================== FOOD PICKER ====================
-        let favPickerMode = 'meal';
-        let foodPickerMode = 'meal';
+        // ==================== MANUAL ENTRY ====================
+        let manualEntryMode = 'log'; // 'log' | 'meal' | 'step'
 
-        async function openFoodSearchForMeal() {
-            foodPickerMode = 'meal';
-            document.getElementById('mealBuilderOverlay').classList.remove('active');
-            document.getElementById('foodPickerTitle').textContent = 'Search Foods';
-            document.getElementById('foodPickerOverlay').classList.add('active');
-            document.getElementById('foodSearchInput').focus();
-        }
+        function openManualEntry(mode, prefill) {
+            manualEntryMode = mode;
+            document.getElementById('manualEntryTitle').textContent = mode === 'log' ? 'Log Food' : 'Add Item to Meal';
 
-        async function openFoodSearchForStepMeal() {
-            foodPickerMode = 'step';
-            document.getElementById('stepMealOverlay').classList.remove('active');
-            document.getElementById('foodPickerTitle').textContent = 'Search Foods';
-            document.getElementById('foodPickerOverlay').classList.add('active');
-            document.getElementById('foodSearchInput').focus();
-        }
+            // Set action buttons based on mode
+            const btns = document.getElementById('manualEntryBtns');
+            if (mode === 'log') {
+                btns.innerHTML = `
+                    <button class="btn btn-secondary" onclick="confirmManualEntry('meal')">Add to Meal</button>
+                    <button class="btn btn-primary" onclick="confirmManualEntry('log')">Log Now</button>`;
+            } else {
+                btns.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeManualEntry()">Cancel</button>
+                    <button class="btn btn-primary" onclick="confirmManualEntry('meal')">Add to Meal</button>`;
+            }
 
-        async function openFavoritePicker() {
-            document.getElementById('methodPickerOverlay').classList.remove('active');
-            favPickerMode = 'quickadd';
-            const favs = await getAllFavoritesDB();
-            let html = '';
-            favs.forEach(fav => {
-                html += `
-                    <div class="food-item" onclick="openFoodDetail({
-                        name: '${fav.name.replace(/'/g, "\\'")}',
-                        protein: ${fav.protein},
-                        carbs: ${fav.carbs},
-                        fat: ${fav.fat},
-                        calories: ${fav.calories},
-                        micros: ${JSON.stringify(fav.micros || {})}
-                    })">
-                        <div class="food-name">${fav.name}</div>
-                        <div class="food-cals">${fav.calories} kcal</div>
-                    </div>
-                `;
+            // Clear all fields
+            ['meFieldName','meFieldCals','meFieldProtein','meFieldCarbs','meFieldFat',
+             'meFieldFiber','meFieldSugar','meFieldSodium','meFieldPotassium',
+             'meFieldCalcium','meFieldIron','meFieldVitA','meFieldVitC','meFieldVitD',
+             'meFieldVitB12','meFieldMagnesium','meFieldZinc'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
             });
-            document.getElementById('foodList').innerHTML = html || '<p style="color:var(--text-muted);text-align:center;padding:20px;">No favorites yet</p>';
-            document.getElementById('foodPickerTitle').textContent = 'Favorite Foods';
-            document.getElementById('foodPickerOverlay').classList.add('active');
-        }
 
-        let _foodSearchResults = [];
-
-        document.getElementById('foodSearchInput').addEventListener('input', async (e) => {
-            const query = e.target.value.trim();
-            if (query.length < 2) {
-                document.getElementById('foodList').innerHTML = '';
-                _foodSearchResults = [];
-                return;
+            // Pre-fill from barcode data if provided
+            if (prefill) {
+                document.getElementById('meFieldName').value = prefill.name || '';
+                document.getElementById('meFieldCals').value = prefill.calories ? Math.round(prefill.calories) : '';
+                document.getElementById('meFieldProtein').value = prefill.protein || '';
+                document.getElementById('meFieldCarbs').value = prefill.carbs || '';
+                document.getElementById('meFieldFat').value = prefill.fat || '';
+                if (prefill.micros) {
+                    const m = prefill.micros;
+                    document.getElementById('meFieldFiber').value = m.fiber || '';
+                    document.getElementById('meFieldSugar').value = m.sugar || '';
+                    document.getElementById('meFieldSodium').value = m.sodium ? Math.round(m.sodium) : '';
+                    document.getElementById('meFieldPotassium').value = m.potassium ? Math.round(m.potassium) : '';
+                    document.getElementById('meFieldCalcium').value = m.calcium ? Math.round(m.calcium) : '';
+                    document.getElementById('meFieldIron').value = m.iron || '';
+                    document.getElementById('meFieldVitA').value = m.vitaminA ? Math.round(m.vitaminA) : '';
+                    document.getElementById('meFieldVitC').value = m.vitaminC || '';
+                    document.getElementById('meFieldVitD').value = m.vitaminD || '';
+                    document.getElementById('meFieldVitB12').value = m.vitaminB12 || '';
+                    document.getElementById('meFieldMagnesium').value = m.magnesium ? Math.round(m.magnesium) : '';
+                    document.getElementById('meFieldZinc').value = m.zinc || '';
+                    // Auto-expand micro section when barcode data includes micros
+                    const sec = document.getElementById('microFieldsSection');
+                    sec.classList.add('open');
+                    document.querySelector('.micro-toggle-btn span:first-child').textContent = '- Vitamins & Minerals';
+                }
+            } else {
+                document.getElementById('microFieldsSection').classList.remove('open');
+                document.querySelector('.micro-toggle-btn span:first-child').textContent = '+ Vitamins & Minerals';
             }
 
-            try {
-                const res = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&action=process&json=1&page_size=20`);
-                const data = await res.json();
-                _foodSearchResults = (data.products || []).map(p => ({
-                    name: p.product_name || 'Unknown',
-                    protein: p.nutriments?.proteins_100g || 0,
-                    carbs: p.nutriments?.carbohydrates_100g || 0,
-                    fat: p.nutriments?.fat_100g || 0,
-                    calories: p.nutriments?.['energy-kcal_100g'] || ((p.nutriments?.proteins_100g || 0) * 4 + (p.nutriments?.carbohydrates_100g || 0) * 4 + (p.nutriments?.fat_100g || 0) * 9),
-                    micros: extractMicros(p.nutriments),
-                }));
-                let html = '';
-                _foodSearchResults.forEach((item, idx) => {
-                    html += `
-                        <div class="food-item" onclick="openFoodDetail(_foodSearchResults[${idx}])">
-                            <div class="food-name">${item.name}</div>
-                            <div class="food-cals">${Math.round(item.calories)} kcal</div>
-                        </div>
-                    `;
-                });
-                document.getElementById('foodList').innerHTML = html || '<p style="color:var(--text-muted);text-align:center;padding:20px;">No results</p>';
-            } catch (e) {
-                document.getElementById('foodList').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px;">Error searching</p>';
-            }
-        });
-
-        function openFoodDetail(item) {
-            document.getElementById('foodDetailName').textContent = item.name;
-            document.getElementById('foodDetailCals').textContent = Math.round(item.calories) + ' kcal (per 100g)';
-            document.getElementById('foodQuantity').value = 100;
-
-            let macrosHTML = `
-                <div class="macro-input-group">
-                    <label class="macro-input-label">Protein (g)</label>
-                    <input type="number" class="macro-input" value="${item.protein || 0}" step="0.1" readonly>
-                </div>
-                <div class="macro-input-group">
-                    <label class="macro-input-label">Carbs (g)</label>
-                    <input type="number" class="macro-input" value="${item.carbs || 0}" step="0.1" readonly>
-                </div>
-                <div class="macro-input-group">
-                    <label class="macro-input-label">Fat (g)</label>
-                    <input type="number" class="macro-input" value="${item.fat || 0}" step="0.1" readonly>
-                </div>
-            `;
-            document.getElementById('foodDetailMacros').innerHTML = macrosHTML;
-
-            const confirmBtn = document.getElementById('confirmFoodDetail');
-            confirmBtn.textContent = favPickerMode === 'quickadd' ? 'Log Food' : 'Add to Meal';
-            window.currentFoodItem = item;
-
-            document.getElementById('foodDetailOverlay').classList.add('active');
+            document.getElementById('saveAsFavToggle').classList.remove('on');
+            document.getElementById('methodPickerOverlay').classList.remove('active');
+            document.getElementById('mealBuilderOverlay').classList.remove('active');
+            document.getElementById('stepMealOverlay').classList.remove('active');
+            document.getElementById('manualEntryOverlay').classList.add('active');
+            setTimeout(() => document.getElementById('meFieldName').focus(), 250);
         }
 
-        async function confirmFoodDetail() {
-            const item = window.currentFoodItem;
-            const qty = parseFloat(document.getElementById('foodQuantity').value) || 100;
-            const multiplier = qty / 100;
+        function closeManualEntry() {
+            document.getElementById('manualEntryOverlay').classList.remove('active');
+            if (manualEntryMode === 'step') {
+                document.getElementById('stepMealOverlay').classList.add('active');
+            } else {
+                document.getElementById('mealBuilderOverlay').classList.add('active');
+            }
+        }
 
-            // Scale micros proportionally with quantity
-            const scaledMicros = {};
-            MICRO_KEYS.forEach(k => { scaledMicros[k] = ((item.micros || {})[k] || 0) * multiplier; });
+        function toggleMicroFields(btn) {
+            const section = document.getElementById('microFieldsSection');
+            section.classList.toggle('open');
+            btn.querySelector('span:first-child').textContent = section.classList.contains('open') ? '- Vitamins & Minerals' : '+ Vitamins & Minerals';
+        }
 
-            if (favPickerMode === 'quickadd') {
-                // Save as standalone meal directly
-                const meal = {
-                    id: Date.now(),
-                    date: viewDateStr(),
-                    name: item.name,
-                    protein: item.protein * multiplier,
-                    carbs: item.carbs * multiplier,
-                    fat: item.fat * multiplier,
-                    calories: item.calories * multiplier,
-                    micros: scaledMicros,
-                    ts: new Date().toISOString()
-                };
-                await saveMealDB(meal);
-                document.getElementById('foodDetailOverlay').classList.remove('active');
-                document.getElementById('foodPickerOverlay').classList.remove('active');
-                document.getElementById('methodPickerOverlay').classList.remove('active');
+        async function confirmManualEntry(action) {
+            const name = document.getElementById('meFieldName').value.trim();
+            if (!name) { showToast('Enter a food name', 'error'); return; }
+
+            const protein  = parseFloat(document.getElementById('meFieldProtein').value) || 0;
+            const carbs    = parseFloat(document.getElementById('meFieldCarbs').value) || 0;
+            const fat      = parseFloat(document.getElementById('meFieldFat').value) || 0;
+            const calories = parseFloat(document.getElementById('meFieldCals').value) || (protein * 4 + carbs * 4 + fat * 9);
+
+            const micros = {
+                fiber:      parseFloat(document.getElementById('meFieldFiber').value) || 0,
+                sugar:      parseFloat(document.getElementById('meFieldSugar').value) || 0,
+                sodium:     parseFloat(document.getElementById('meFieldSodium').value) || 0,
+                potassium:  parseFloat(document.getElementById('meFieldPotassium').value) || 0,
+                calcium:    parseFloat(document.getElementById('meFieldCalcium').value) || 0,
+                iron:       parseFloat(document.getElementById('meFieldIron').value) || 0,
+                vitaminA:   parseFloat(document.getElementById('meFieldVitA').value) || 0,
+                vitaminC:   parseFloat(document.getElementById('meFieldVitC').value) || 0,
+                vitaminD:   parseFloat(document.getElementById('meFieldVitD').value) || 0,
+                vitaminB12: parseFloat(document.getElementById('meFieldVitB12').value) || 0,
+                magnesium:  parseFloat(document.getElementById('meFieldMagnesium').value) || 0,
+                zinc:       parseFloat(document.getElementById('meFieldZinc').value) || 0,
+            };
+
+            const foodItem = { name, protein, carbs, fat, calories, micros };
+
+            // Save as favorite if toggled
+            if (document.getElementById('saveAsFavToggle').classList.contains('on')) {
+                await saveFavoriteDB({ id: Date.now(), ...foodItem });
+                showToast('Saved to Favorites!', 'success');
+            }
+
+            // Determine effective action
+            const isLog = action === 'log' || (action === 'meal' && manualEntryMode === 'log' && false);
+            const doLog = action === 'log';
+
+            if (doLog) {
+                // Log directly as its own entry
+                await saveMealDB({ id: Date.now(), date: viewDateStr(), ...foodItem, ts: new Date().toISOString() });
+                closeOverlays();
                 showToast('Logged!', 'success');
                 refreshToday();
-                return;
+            } else {
+                // Add to meal in progress
+                if (!window.currentMealInProgress) window.currentMealInProgress = [];
+                document.getElementById('manualEntryOverlay').classList.remove('active');
+                if (manualEntryMode === 'step') {
+                    if (currentStepMeal) {
+                        if (!currentStepMeal.foods) currentStepMeal.foods = [];
+                        currentStepMeal.foods.push(foodItem);
+                        openStepMeal(currentStepMeal.id);
+                    }
+                } else {
+                    window.currentMealInProgress.push(foodItem);
+                    updateMealBuilder();
+                    document.getElementById('mealBuilderOverlay').classList.add('active');
+                }
             }
+        }
 
-            // Add to meal in progress
+        // ==================== FAVORITES PICKER ====================
+        async function openFavoritePicker() {
+            document.getElementById('methodPickerOverlay').classList.remove('active');
+            const favs = await getAllFavoritesDB();
+            let html = '';
+            if (favs.length === 0) {
+                html = '<p style="color:var(--text-muted);text-align:center;padding:20px 0;">No favorites yet.<br>Log a food and toggle ⭐ Save as Favorite.</p>';
+            } else {
+                favs.forEach(fav => {
+                    html += `
+                        <div class="fav-item">
+                            <div class="fav-item-top">
+                                <div>
+                                    <div class="fav-item-name">${fav.name}</div>
+                                    <div class="fav-item-macros">P: ${Math.round(fav.protein)}g | C: ${Math.round(fav.carbs)}g | F: ${Math.round(fav.fat)}g</div>
+                                </div>
+                                <div class="fav-item-cals">${Math.round(fav.calories)}<span style="font-size:10px;font-weight:400"> kcal</span></div>
+                            </div>
+                            <div class="fav-item-btns">
+                                <button class="btn-log" onclick="logFavorite(${fav.id})">Log Now</button>
+                                <button class="btn-add-meal" onclick="addFavoriteToMeal(${fav.id})">Add to Meal</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            document.getElementById('favPickerList').innerHTML = html;
+            document.getElementById('favPickerOverlay').classList.add('active');
+        }
+
+        async function logFavorite(id) {
+            const favs = await getAllFavoritesDB();
+            const fav = favs.find(f => f.id === id);
+            if (!fav) return;
+            await saveMealDB({ id: Date.now(), date: viewDateStr(), name: fav.name, protein: fav.protein, carbs: fav.carbs, fat: fav.fat, calories: fav.calories, micros: fav.micros || {}, ts: new Date().toISOString() });
+            closeOverlays();
+            showToast(`${fav.name} logged!`, 'success');
+            refreshToday();
+        }
+
+        async function addFavoriteToMeal(id) {
+            const favs = await getAllFavoritesDB();
+            const fav = favs.find(f => f.id === id);
+            if (!fav) return;
             if (!window.currentMealInProgress) window.currentMealInProgress = [];
-            window.currentMealInProgress.push({
-                name: item.name,
-                protein: item.protein * multiplier,
-                carbs: item.carbs * multiplier,
-                fat: item.fat * multiplier,
-                calories: item.calories * multiplier,
-                micros: scaledMicros,
-            });
-
+            window.currentMealInProgress.push({ name: fav.name, protein: fav.protein, carbs: fav.carbs, fat: fav.fat, calories: fav.calories, micros: fav.micros || {} });
+            document.getElementById('favPickerOverlay').classList.remove('active');
             updateMealBuilder();
-            document.getElementById('foodDetailOverlay').classList.remove('active');
-            document.getElementById('foodPickerOverlay').classList.remove('active');
             document.getElementById('mealBuilderOverlay').classList.add('active');
         }
 
@@ -1936,7 +2184,6 @@
         function openMealBuilder() {
             document.getElementById('methodPickerOverlay').classList.remove('active');
             window.currentMealInProgress = [];
-            foodPickerMode = 'meal';
             updateMealBuilder();
             document.getElementById('mealBuilderOverlay').classList.add('active');
         }
