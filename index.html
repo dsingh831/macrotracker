@@ -2094,24 +2094,32 @@
 
             const foodItem = { name, protein, carbs, fat, calories, micros };
 
-            // Save as favorite if toggled
+            // Save as favorite if toggled — isolated in its own try/catch so a DB
+            // failure here NEVER silently blocks the Log Now / Add to Meal action.
             if (document.getElementById('saveAsFavToggle').classList.contains('on')) {
-                await saveFavoriteDB({ id: Date.now(), ...foodItem });
-                showToast('Saved to Favorites!', 'success');
+                try {
+                    await saveFavoriteDB({ id: Date.now(), ...foodItem });
+                    showToast('Saved to Favorites!', 'success');
+                } catch (e) {
+                    console.error('saveFavoriteDB failed:', e);
+                    showToast('Could not save favorite — continuing anyway', 'error');
+                }
             }
 
-            // Determine effective action
-            const isLog = action === 'log' || (action === 'meal' && manualEntryMode === 'log' && false);
             const doLog = action === 'log';
 
             if (doLog) {
-                // Log directly as its own entry
-                await saveMealDB({ id: Date.now(), date: viewDateStr(), ...foodItem, ts: new Date().toISOString() });
-                closeOverlays();
-                showToast('Logged!', 'success');
-                refreshToday();
+                try {
+                    await saveMealDB({ id: Date.now(), date: viewDateStr(), ...foodItem, ts: new Date().toISOString() });
+                    closeOverlays();
+                    showToast('Logged!', 'success');
+                    refreshToday();
+                } catch (e) {
+                    console.error('saveMealDB failed:', e);
+                    showToast('Error saving: ' + e.message, 'error');
+                }
             } else {
-                // Add to meal in progress
+                // Add to meal in progress (meal builder or step meal)
                 if (!window.currentMealInProgress) window.currentMealInProgress = [];
                 document.getElementById('manualEntryOverlay').classList.remove('active');
                 if (manualEntryMode === 'step') {
