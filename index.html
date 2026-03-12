@@ -1071,8 +1071,8 @@
             <div class="date-label" id="dateLabel"></div>
 
             <div class="day-type-toggle">
-                <button class="day-type-btn active" id="dayTypeNormal" onclick="setDayType('normal')">Normal</button>
-                <button class="day-type-btn" id="dayTypeCheat" onclick="setDayType('cheat')">Cheat Day</button>
+                <button class="day-type-btn active" id="dayTypeActive" onclick="setDayType('active')">Active Day</button>
+                <button class="day-type-btn" id="dayTypeRest" onclick="setDayType('rest')">Rest Day</button>
             </div>
 
             <div class="date-nav-row">
@@ -1124,7 +1124,7 @@
             <div class="card">
                 <div class="card-title">Body Weight</div>
                 <div class="body-input-group">
-                    <input type="number" id="weightInput" placeholder="kg" step="0.1">
+                    <input type="number" id="weightInput" placeholder="lbs" step="0.1">
                     <button onclick="logWeight()">Log</button>
                 </div>
                 <div id="weightsHistory"></div>
@@ -1513,7 +1513,9 @@
 
         async function initDB() {
             return new Promise((resolve, reject) => {
-                const req = indexedDB.open(DB_NAME, 2);
+                // Version 3: ensures weights store exists (renamed from bodyLogs in v2)
+                // and guarantees favorites + settings exist on all devices.
+                const req = indexedDB.open(DB_NAME, 3);
                 req.onupgradeneeded = (e) => {
                     const database = e.target.result;
                     if (!database.objectStoreNames.contains(STORES.meals)) {
@@ -1736,21 +1738,35 @@
         let darkMode = false;
 
         async function loadSettings() {
-            const targets = await getSetting('dailyTargets');
-            if (targets) {
-                document.getElementById('proteinTarget').value = targets.protein;
-                document.getElementById('carbsTarget').value = targets.carbs;
-                document.getElementById('fatTarget').value = targets.fat;
-            }
+            // Each setting loads independently — a failure on one never blocks another.
+            try {
+                const targets = await getSetting('dailyTargets');
+                if (targets) {
+                    document.getElementById('proteinTarget').value = targets.protein;
+                    document.getElementById('carbsTarget').value = targets.carbs;
+                    document.getElementById('fatTarget').value = targets.fat;
+                }
+            } catch (e) { console.error('loadSettings targets failed:', e); }
 
-            darkMode = await getSetting('darkMode');
-            applyTheme();
+            try {
+                const saved = await getSetting('darkMode');
+                darkMode = !!saved; // coerce undefined/null → false
+            } catch (e) {
+                console.error('loadSettings darkMode failed:', e);
+                darkMode = false;
+            } finally {
+                applyTheme(); // always runs, regardless of DB errors
+            }
         }
 
-        function toggleDarkMode() {
+        async function toggleDarkMode() {
             darkMode = !darkMode;
             applyTheme();
-            saveSetting('darkMode', darkMode);
+            try {
+                await saveSetting('darkMode', darkMode);
+            } catch (e) {
+                console.error('toggleDarkMode save failed:', e);
+            }
         }
 
         function applyTheme() {
@@ -1863,7 +1879,7 @@
                 weightsHTML += `
                     <div class="body-entry">
                         <div class="body-entry-info">
-                            <div class="body-entry-value">${parseFloat(w.weight).toFixed(1)} kg</div>
+                            <div class="body-entry-value">${parseFloat(w.weight).toFixed(1)} lbs</div>
                             <div class="body-entry-date">${new Date(w.date).toLocaleDateString()}</div>
                         </div>
                         <button class="body-entry-delete" onclick="deleteWeight(${w.id})">✕</button>
@@ -1874,20 +1890,26 @@
         }
 
         async function setDayType(type) {
-            await saveSetting(`dayType_${viewDateStr()}`, type);
+            // Update the UI immediately so it feels responsive — don't wait on DB
             updateDayTypeToggle(type);
+            try {
+                await saveSetting(`dayType_${viewDateStr()}`, type);
+            } catch (e) {
+                console.error('setDayType saveSetting failed:', e);
+            }
         }
 
         function updateDayTypeToggle(type) {
-            const normalBtn = document.getElementById('dayTypeNormal');
-            const cheatBtn = document.getElementById('dayTypeCheat');
+            const activeBtn = document.getElementById('dayTypeActive');
+            const restBtn = document.getElementById('dayTypeRest');
+            if (!activeBtn || !restBtn) return;
 
-            if (type === 'cheat') {
-                normalBtn.classList.remove('active');
-                cheatBtn.classList.add('active');
+            if (type === 'rest') {
+                activeBtn.classList.remove('active');
+                restBtn.classList.add('active');
             } else {
-                normalBtn.classList.add('active');
-                cheatBtn.classList.remove('active');
+                activeBtn.classList.add('active');
+                restBtn.classList.remove('active');
             }
         }
 
@@ -2503,7 +2525,7 @@
                 data: {
                     labels: bodyLabels,
                     datasets: [{
-                        label: 'Weight (kg)',
+                        label: 'Weight (lbs)',
                         data: bodyData,
                         borderColor: chartColors.protein,
                         backgroundColor: chartColors.protein + '20',
